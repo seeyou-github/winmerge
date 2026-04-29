@@ -28,6 +28,32 @@ jobs:
         call .\BuildBin.vs2022.cmd x64
         call .\Testing\GoogleTest\UnitTests\UnitTests.exe
         call .\BuildTranslations.cmd
+
+    - name: Normalize x64 build outputs
+      shell: pwsh
+      run: |
+        $expectedDir = "Build/x64/Release"
+        New-Item -ItemType Directory -Force -Path $expectedDir | Out-Null
+
+        $exe = Get-ChildItem -Path Build -Recurse -Filter WinMergeU.exe | Select-Object -First 1
+        if ($null -eq $exe) {
+          throw "WinMergeU.exe not found anywhere under Build/"
+        }
+        Copy-Item $exe.FullName "$expectedDir/WinMergeU.exe" -Force
+
+        $manifest = Get-ChildItem -Path Build -Recurse -Filter WinMergeU.exe.manifest | Select-Object -First 1
+        if ($null -ne $manifest) {
+          Copy-Item $manifest.FullName "$expectedDir/WinMergeU.exe.manifest" -Force
+        }
+
+        $pdb = Get-ChildItem -Path Build -Recurse -Filter WinMergeU.pdb | Select-Object -First 1
+        if ($null -ne $pdb) {
+          Copy-Item $pdb.FullName "$expectedDir/WinMergeU.pdb" -Force
+        }
+
+    - name: Build x64 archive
+      shell: cmd
+      run: |
         call .\BuildArc.cmd x64 -ci
 
     - name: Validate and repack zip
