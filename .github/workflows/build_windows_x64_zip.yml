@@ -23,21 +23,27 @@ jobs:
     - name: Build x64 zip
       shell: cmd
       run: |
-        call .\DownloadDeps.cmd || exit /b %errorlevel%
-        Build\msys2\usr\bin\re2c.exe Src\FilterEngine\FilterLexer.re -o Src\FilterEngine\FilterLexer.cpp || exit /b %errorlevel%
-        Build\msys2\usr\bin\lemon.exe Src\FilterEngine\FilterParser.y -TBuild\msys2\usr\share\lemon\lempar.c || exit /b %errorlevel%
-        call .\BuildManual.cmd || exit /b %errorlevel%
-        call .\SetVersion.cmd || exit /b %errorlevel%
-        cscript /nologo ExpandEnvironmenStrings.js Version.in > Version.h || exit /b %errorlevel%
+        call .\DownloadDeps.cmd
+        if errorlevel 1 exit /b 1
+        call .\BuildManual.cmd
+        if errorlevel 1 exit /b 1
+        call .\BuildBin.vs2022.cmd x64
+        if errorlevel 1 exit /b 1
         for /f "usebackq tokens=*" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -version [17.0^,18.0^) -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath`) do set InstallDir=%%i
         if not defined InstallDir exit /b 1
-        call "%InstallDir%\Common7\Tools\VsDevCmd.bat" || exit /b %errorlevel%
-        MSBuild WinMerge.sln /t:Merge:Rebuild /p:Configuration=Release /p:Platform=x64
-        if errorlevel 1 exit /b %errorlevel%
+        call "%InstallDir%\Common7\Tools\VsDevCmd.bat"
+        if errorlevel 1 exit /b 1
         MSBuild WinMerge.sln /t:UnitTests:Rebuild /p:Configuration=Test /p:Platform=x64
-        if errorlevel 1 exit /b %errorlevel%
-        call .\Testing\GoogleTest\UnitTests\UnitTests.exe || exit /b %errorlevel%
-        call .\BuildTranslations.cmd || exit /b %errorlevel%
+        if errorlevel 1 exit /b 1
+        call .\Testing\GoogleTest\UnitTests\UnitTests.exe
+        if errorlevel 1 exit /b 1
+        call .\BuildTranslations.cmd
+        if errorlevel 1 exit /b 1
+        if not exist "Build\x64\Release\WinMergeU.exe" (
+          echo WinMergeU.exe was not produced under Build\x64\Release
+          dir /s /b Build\*.exe
+          exit /b 1
+        )
 
     - name: Normalize x64 build outputs
       shell: pwsh
@@ -73,7 +79,8 @@ jobs:
     - name: Build x64 archive
       shell: cmd
       run: |
-        call .\BuildArc.cmd x64 -ci || exit /b %errorlevel%
+        call .\BuildArc.cmd x64 -ci
+        if errorlevel 1 exit /b 1
 
     - name: Validate and repack zip
       shell: pwsh

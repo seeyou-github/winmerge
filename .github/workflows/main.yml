@@ -28,8 +28,10 @@ jobs:
     - name: Build
       shell: cmd
       run: |
-        call .\DownloadDeps.cmd || exit /b %errorlevel%
-        call .\BuildAll.vs2022.cmd x64 -ci || exit /b %errorlevel%
+        call .\DownloadDeps.cmd
+        if errorlevel 1 exit /b 1
+        call .\BuildAll.vs2022.cmd x64 -ci
+        if errorlevel 1 exit /b 1
 
     - name: Upload zip
       uses: actions/upload-artifact@v4
