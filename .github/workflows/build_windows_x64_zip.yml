@@ -19,13 +19,16 @@ jobs:
         key: WinMergeDownloadDeps
 
     - name: Build x64 zip
+      shell: cmd
       run: |
-        .\DownloadDeps.cmd
-        .\BuildManual.cmd
-        .\BuildBin.vs2022.cmd x64
-        .\Testing\GoogleTest\UnitTests\UnitTests.exe
-        .\BuildTranslations.cmd
-        .\BuildArc.cmd x64 -ci
+        call .\DownloadDeps.cmd
+        Build\msys2\usr\bin\re2c.exe Src\FilterEngine\FilterLexer.re -o Src\FilterEngine\FilterLexer.cpp
+        Build\msys2\usr\bin\lemon.exe Src\FilterEngine\FilterParser.y -TBuild\msys2\usr\share\lemon\lempar.c
+        call .\BuildManual.cmd
+        call .\BuildBin.vs2022.cmd x64
+        call .\Testing\GoogleTest\UnitTests\UnitTests.exe
+        call .\BuildTranslations.cmd
+        call .\BuildArc.cmd x64 -ci
 
     - name: Upload zip
       uses: actions/upload-artifact@v4
