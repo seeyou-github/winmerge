@@ -1,0 +1,34 @@
+name: Build Windows x64 ZIP
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: 'recursive'
+
+    - name: Cache
+      uses: actions/cache@v4
+      with:
+        path: Build/WinMergeDownloadDeps
+        key: WinMergeDownloadDeps
+
+    - name: Build x64 zip
+      run: |
+        .\DownloadDeps.cmd
+        .\BuildManual.cmd
+        .\BuildBin.vs2022.cmd x64
+        .\Testing\GoogleTest\UnitTests\UnitTests.exe
+        .\BuildTranslations.cmd
+        .\BuildArc.cmd x64 -ci
+
+    - name: Upload zip
+      uses: actions/upload-artifact@v4
+      with:
+        name: WinMerge-x64.zip
+        path: Build/Releases/*-x64-exe.zip
