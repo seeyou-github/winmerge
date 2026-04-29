@@ -29,11 +29,11 @@ jobs:
         cscript /nologo ExpandEnvironmenStrings.js Version.in > Version.h
         for /f "usebackq tokens=*" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -version [17.0^,18.0^) -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath`) do set InstallDir=%%i
         call "%InstallDir%\Common7\Tools\VsDevCmd.bat"
-        MSBuild Src\Merge.vcxproj /t:Rebuild /p:Configuration=Release /p:Platform=x64
+        MSBuild WinMerge.sln /t:Merge:Rebuild /p:Configuration=Release /p:Platform=x64
         if errorlevel 1 exit /b %errorlevel%
-        MSBuild Testing\GoogleTest\UnitTests\UnitTests.vcxproj /t:Rebuild /p:Configuration=Test /p:Platform=x64
+        MSBuild WinMerge.sln /t:UnitTests:Rebuild /p:Configuration=Test /p:Platform=x64
         if errorlevel 1 exit /b %errorlevel%
-        call .\Build\X64\Test\UnitTests.exe
+        call .\Testing\GoogleTest\UnitTests\UnitTests.exe
         call .\BuildTranslations.cmd
 
     - name: Normalize x64 build outputs
@@ -66,12 +66,6 @@ jobs:
             Copy-Item $pdb.FullName $expectedPdb -Force
           }
         }
-
-    - name: Show located outputs
-      shell: pwsh
-      run: |
-        Get-ChildItem -Path Build -Recurse -Include WinMergeU.exe,WinMergeU.exe.manifest,WinMergeU.pdb,UnitTests.exe |
-          Select-Object FullName
 
     - name: Build x64 archive
       shell: cmd
