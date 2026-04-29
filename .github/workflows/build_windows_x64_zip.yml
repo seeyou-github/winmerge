@@ -30,6 +30,40 @@ jobs:
         call .\BuildTranslations.cmd
         call .\BuildArc.cmd x64 -ci
 
+    - name: Validate and repack zip
+      shell: pwsh
+      run: |
+        $exe = "Build/x64/Release/WinMergeU.exe"
+        $manifest = "Build/x64/Release/WinMergeU.exe.manifest"
+        $stageDir = "Build/Releases/x64-zip-version/WinMerge"
+        $zip = Get-ChildItem "Build/Releases/*-x64-exe.zip" | Select-Object -First 1
+
+        if (!(Test-Path $exe)) {
+          throw "Missing build output: $exe"
+        }
+        if (!(Test-Path $stageDir)) {
+          throw "Missing staging directory: $stageDir"
+        }
+        if ($null -eq $zip) {
+          throw "Missing packaged zip under Build/Releases"
+        }
+
+        Copy-Item $exe "$stageDir/WinMergeU.exe" -Force
+        if (Test-Path $manifest) {
+          Copy-Item $manifest "$stageDir/WinMergeU.exe.manifest" -Force
+        }
+
+        Remove-Item $zip.FullName -Force
+        & 7z.exe a -tzip $zip.FullName "$stageDir" | Out-Host
+        if ($LASTEXITCODE -ne 0) {
+          throw "7z repack failed with exit code $LASTEXITCODE"
+        }
+
+        $zipList = (& 7z.exe l $zip.FullName | Out-String)
+        if ($zipList -notmatch 'WinMergeU\.exe') {
+          throw "Packaged zip does not contain WinMergeU.exe"
+        }
+
     - name: Upload zip
       uses: actions/upload-artifact@v4
       with:
