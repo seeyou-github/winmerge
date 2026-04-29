@@ -39,23 +39,32 @@ jobs:
     - name: Normalize x64 build outputs
       shell: pwsh
       run: |
-        $expectedDir = "Build/x64/Release"
+        $expectedDir = "Build/X64/Release"
         New-Item -ItemType Directory -Force -Path $expectedDir | Out-Null
 
         $exe = Get-ChildItem -Path Build -Recurse -Filter WinMergeU.exe | Select-Object -First 1
         if ($null -eq $exe) {
           throw "WinMergeU.exe not found anywhere under Build/"
         }
-        Copy-Item $exe.FullName "$expectedDir/WinMergeU.exe" -Force
+        $expectedExe = Join-Path $expectedDir "WinMergeU.exe"
+        if (([System.IO.Path]::GetFullPath($exe.FullName)).ToLowerInvariant() -ne ([System.IO.Path]::GetFullPath($expectedExe)).ToLowerInvariant()) {
+          Copy-Item $exe.FullName $expectedExe -Force
+        }
 
         $manifest = Get-ChildItem -Path Build -Recurse -Filter WinMergeU.exe.manifest | Select-Object -First 1
         if ($null -ne $manifest) {
-          Copy-Item $manifest.FullName "$expectedDir/WinMergeU.exe.manifest" -Force
+          $expectedManifest = Join-Path $expectedDir "WinMergeU.exe.manifest"
+          if (([System.IO.Path]::GetFullPath($manifest.FullName)).ToLowerInvariant() -ne ([System.IO.Path]::GetFullPath($expectedManifest)).ToLowerInvariant()) {
+            Copy-Item $manifest.FullName $expectedManifest -Force
+          }
         }
 
         $pdb = Get-ChildItem -Path Build -Recurse -Filter WinMergeU.pdb | Select-Object -First 1
         if ($null -ne $pdb) {
-          Copy-Item $pdb.FullName "$expectedDir/WinMergeU.pdb" -Force
+          $expectedPdb = Join-Path $expectedDir "WinMergeU.pdb"
+          if (([System.IO.Path]::GetFullPath($pdb.FullName)).ToLowerInvariant() -ne ([System.IO.Path]::GetFullPath($expectedPdb)).ToLowerInvariant()) {
+            Copy-Item $pdb.FullName $expectedPdb -Force
+          }
         }
 
     - name: Show located outputs
@@ -72,8 +81,8 @@ jobs:
     - name: Validate and repack zip
       shell: pwsh
       run: |
-        $exe = "Build/x64/Release/WinMergeU.exe"
-        $manifest = "Build/x64/Release/WinMergeU.exe.manifest"
+        $exe = "Build/X64/Release/WinMergeU.exe"
+        $manifest = "Build/X64/Release/WinMergeU.exe.manifest"
         $stageDir = "Build/Releases/x64-zip-version/WinMerge"
         $zip = Get-ChildItem "Build/Releases/*-x64-exe.zip" | Select-Object -First 1
 
