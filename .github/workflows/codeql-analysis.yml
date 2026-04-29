@@ -9,13 +9,21 @@ on:
 jobs:
   analyze:
     name: Analyze
-    runs-on: windows-latest
+    runs-on: windows-2022
     steps:
       - name: Checkout repository
         id: checkout_repo
         uses: actions/checkout@v4
         with:
           submodules: 'recursive'
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: Build/WinMergeDownloadDeps
+          key: ${{ runner.os }}-winmerge-download-deps-v2-${{ hashFiles('DownloadDeps.cmd') }}
+          restore-keys: |
+            ${{ runner.os }}-winmerge-download-deps-v2-
 
       - name: Initialize CodeQL
         id: init_codeql
@@ -27,10 +35,10 @@ jobs:
 
       - name: Build project
         id: build_project
-        shell: pwsh
+        shell: cmd
         run: |
-          .\DownloadDeps.cmd
-          .\BuildAll.vs2022.cmd x64 -ci
+          call .\DownloadDeps.cmd || exit /b %errorlevel%
+          call .\BuildAll.vs2022.cmd x64 -ci || exit /b %errorlevel%
 
       - name: Perform CodeQL Analysis
         id: analyze_codeql

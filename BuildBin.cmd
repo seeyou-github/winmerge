@@ -8,7 +8,10 @@ for /f "usebackq tokens=*" %%i in (`"%programfiles(x86)%\microsoft visual studio
   set InstallDir=%%i
 )
 if exist "%InstallDir%\Common7\Tools\vsdevcmd.bat" (
-  call "%InstallDir%\Common7\Tools\vsdevcmd.bat
+  call "%InstallDir%\Common7\Tools\vsdevcmd.bat" || goto :eof
+) else (
+  echo Visual Studio Build Tools were not found.
+  exit /b 1
 )
 
 if "%1" == "" (

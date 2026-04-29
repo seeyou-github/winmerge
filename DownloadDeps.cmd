@@ -1,10 +1,10 @@
 @echo off
-setlocal
-set path="%ProgramFiles%\7-zip";"%ProgramFiles(x86)%\7-zip";%path%
+setlocal EnableExtensions
+set "path=%ProgramFiles%\7-zip;%ProgramFiles(x86)%\7-zip;%path%"
 7z > NUL
-if not %ERRORLEVEL% == 0 (
+if errorlevel 1 (
   echo 7-Zip is not installed
-  goto :eof
+  exit /b 1
 )
 @echo on
 
@@ -37,7 +37,7 @@ https://github.com/jqlang/jq/archive/refs/tags/jq-1.8.1.zip!Build\jq ^
 https://github.com/facebook/zstd/releases/download/v1.5.2/zstd-v1.5.2-win64.zip!Build\zstd ^
 https://mirror.msys2.org/mingw/mingw32/mingw-w64-i686-md4c-0.5.2-1-any.pkg.tar.zst!Build\md4c ^
 https://mirror.msys2.org/msys/i686/gcc-libs-10.2.0-1-i686.pkg.tar.zst!Build\msys2_tmp ^
-https://mirror.msys2.org/msys/i686/msys2-runtime-3.2.0-14-i686.pkg.tar.zst!Build\msys2_tmp ^
+https://mirror.msys2.org/msys/i686/msys2-runtime-3.3.6-14-i686.pkg.tar.zst!Build\msys2_tmp ^
 https://mirror.msys2.org/msys/i686/patch-2.7.6-1-i686.pkg.tar.xz!Build\msys2_tmp ^
 https://mirror.msys2.org/msys/i686/lemon-3.46.1-1-i686.pkg.tar.zst!Build\msys2_tmp ^
 https://mirror.msys2.org/msys/i686/re2c-3.1-2-i686.pkg.tar.zst!Build\msys2_tmp ^
@@ -50,19 +50,28 @@ mkdir "%downloadsdir%" 2> NUL
 for %%p in (%urls_destdirs%) do (
   for /F "tokens=1,2 delims=!" %%u in ("%%p") do (
     if not exist "%downloadsdir%\%%~nxu" (
-      powershell -command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest %%u -Outfile '%downloadsdir%\%%~nxu'"
+      powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$ErrorActionPreference = 'Stop'; [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri '%%u' -OutFile '%downloadsdir%\%%~nxu' -UseBasicParsing"
+      if errorlevel 1 exit /b 1
     )
     if "%%~xu" == ".zip" (
       7z x "%downloadsdir%\%%~nxu" -aoa -o%%v
+      if errorlevel 1 exit /b 1
     ) else (
       if "%%~xu" == ".xz" (
         7z x "%downloadsdir%\%%~nxu" -so | 7z x -aoa -si -ttar -o%%v
+        if errorlevel 1 exit /b 1
       ) else (
         mkdir %%v > NUL
         if "%%~xu" == ".zst" (
+          if not exist "Build\zstd\zstd-v1.5.2-win64\zstd.exe" (
+            echo zstd.exe is missing. The zstd package must be extracted before .zst packages.
+            exit /b 1
+          )
           Build\zstd\zstd-v1.5.2-win64\zstd.exe -dc "%downloadsdir%\%%~nxu" | tar xf - -C %%v
+          if errorlevel 1 exit /b 1
         ) else (
           copy "%downloadsdir%\%%~nxu" %%v
+          if errorlevel 1 exit /b 1
         )
       )
     )
@@ -83,6 +92,20 @@ copy Build\msys2_tmp\usr\bin\lemon.exe Build\msys2\usr\bin\
 copy Build\msys2_tmp\usr\bin\re2c.exe Build\msys2\usr\bin\
 xcopy /s /y Build\msys2_tmp\usr\share\*.* Build\msys2\usr\share\
 rmdir /q /s Build\msys2_tmp\ > NUL 2> NUL
+
+call :RequireFile "Build\msys2\usr\bin\patch.exe" || exit /b 1
+call :RequireFile "Build\msys2\usr\bin\msys-2.0.dll" || exit /b 1
+call :RequireFile "Build\msys2\usr\bin\msys-gcc_s-1.dll" || exit /b 1
+call :RequireFile "Build\msys2\usr\bin\msys-stdc++-6.dll" || exit /b 1
+call :RequireFile "Build\msys2\usr\bin\lemon.exe" || exit /b 1
+call :RequireFile "Build\msys2\usr\bin\re2c.exe" || exit /b 1
+call :RequireFile "Build\msys2\usr\share\lemon\lempar.c" || exit /b 1
+
+Build\msys2\usr\bin\re2c.exe --version > NUL
+if errorlevel 1 (
+  echo re2c.exe failed to run.
+  exit /b 1
+)
 
 for %%i in (x86 x64 ARM ARM64) do (
   for %%j in (Release Debug Test) do (
@@ -142,3 +165,11 @@ for %%i in (x86 x64 ARM ARM64) do (
 )
 
 popd
+exit /b 0
+
+:RequireFile
+if not exist "%~1" (
+  echo Required dependency is missing: %~1
+  exit /b 1
+)
+exit /b 0
