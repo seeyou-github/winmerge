@@ -21,9 +21,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: Build/WinMergeDownloadDeps
-          key: ${{ runner.os }}-winmerge-download-deps-v2-${{ hashFiles('DownloadDeps.cmd') }}
+          key: ${{ runner.os }}-winmerge-download-deps-v3-${{ hashFiles('DownloadDeps.cmd') }}
           restore-keys: |
-            ${{ runner.os }}-winmerge-download-deps-v2-
+            ${{ runner.os }}-winmerge-download-deps-v3-
 
       - name: Initialize CodeQL
         id: init_codeql

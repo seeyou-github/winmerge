@@ -35,13 +35,13 @@ https://github.com/htacg/tidy-html5/archive/refs/tags/5.4.0.zip!Build\tidy-html5
 https://github.com/jqlang/jq/releases/download/jq-1.8.1/jq-windows-i386.exe!Build\jq ^
 https://github.com/jqlang/jq/archive/refs/tags/jq-1.8.1.zip!Build\jq ^
 https://github.com/facebook/zstd/releases/download/v1.5.2/zstd-v1.5.2-win64.zip!Build\zstd ^
-https://mirror.msys2.org/mingw/mingw32/mingw-w64-i686-md4c-0.5.2-1-any.pkg.tar.zst!Build\md4c ^
-https://mirror.msys2.org/msys/i686/gcc-libs-10.2.0-1-i686.pkg.tar.zst!Build\msys2_tmp ^
-https://mirror.msys2.org/msys/i686/msys2-runtime-3.3.6-14-i686.pkg.tar.zst!Build\msys2_tmp ^
-https://mirror.msys2.org/msys/i686/patch-2.7.6-1-i686.pkg.tar.xz!Build\msys2_tmp ^
-https://mirror.msys2.org/msys/i686/lemon-3.46.1-1-i686.pkg.tar.zst!Build\msys2_tmp ^
-https://mirror.msys2.org/msys/i686/re2c-3.1-2-i686.pkg.tar.zst!Build\msys2_tmp ^
-https://mirror.msys2.org/msys/i686/gcc-libs-13.3.0-1-i686.pkg.tar.zst!Build\msys2_tmp ^
+https://repo.msys2.org/mingw/mingw32/mingw-w64-i686-md4c-0.5.2-1-any.pkg.tar.zst!Build\md4c ^
+https://repo.msys2.org/msys/i686/gcc-libs-10.2.0-1-i686.pkg.tar.zst!Build\msys2_tmp ^
+https://repo.msys2.org/msys/i686/msys2-runtime-3.3.6-14-i686.pkg.tar.zst!Build\msys2_tmp ^
+https://repo.msys2.org/msys/i686/patch-2.7.6-1-i686.pkg.tar.xz!Build\msys2_tmp ^
+https://repo.msys2.org/msys/i686/lemon-3.46.1-1-i686.pkg.tar.zst!Build\msys2_tmp ^
+https://repo.msys2.org/msys/i686/re2c-3.1-2-i686.pkg.tar.zst!Build\msys2_tmp ^
+https://repo.msys2.org/msys/i686/gcc-libs-13.3.0-1-i686.pkg.tar.zst!Build\msys2_tmp ^
 http://www.magicnotes.com/steelbytes/SBAppLocale_ENG.zip!Docs\Manual\Tools
 
 pushd "%~dp0"
@@ -50,7 +50,7 @@ mkdir "%downloadsdir%" 2> NUL
 for %%p in (%urls_destdirs%) do (
   for /F "tokens=1,2 delims=!" %%u in ("%%p") do (
     if not exist "%downloadsdir%\%%~nxu" (
-      powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$ErrorActionPreference = 'Stop'; [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri '%%u' -OutFile '%downloadsdir%\%%~nxu' -UseBasicParsing"
+      call :DownloadFile "%%u" "%downloadsdir%\%%~nxu"
       if errorlevel 1 exit /b 1
     )
     if "%%~xu" == ".zip" (
@@ -166,6 +166,21 @@ for %%i in (x86 x64 ARM ARM64) do (
 
 popd
 exit /b 0
+
+:DownloadFile
+set "DownloadUrl=%~1"
+set "DownloadFile=%~2"
+for /L %%r in (1,1,3) do (
+  powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue'; [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri '%DownloadUrl%' -OutFile '%DownloadFile%' -UseBasicParsing"
+  if not errorlevel 1 exit /b 0
+  del "%DownloadFile%" > NUL 2> NUL
+  if %%r == 3 (
+    echo Failed to download %DownloadUrl%
+    exit /b 1
+  )
+  timeout /t 5 /nobreak > NUL
+)
+exit /b 1
 
 :RequireFile
 if not exist "%~1" (
