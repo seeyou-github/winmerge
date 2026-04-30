@@ -208,8 +208,8 @@ void CEditPluginDlg::UpdateControls()
 	ShowDlgItem(IDC_PLUGIN_WINDOWTYPE_STATIC, unpacker);
 	ShowDlgItem(IDC_PLUGIN_WINDOWTYPE, unpacker);
 	ShowDlgItem(IDC_PLUGIN_GENERATESCRIPT, unpacker);
-	ShowDlgItem(IDC_PLUGIN_MENUCAPTION_STATIC, !urlhandler);
-	ShowDlgItem(IDC_PLUGIN_MENUCAPTION, !urlhandler);
+	ShowDlgItem(IDC_PLUGIN_MENUCAPTION_STATIC, true);
+	ShowDlgItem(IDC_PLUGIN_MENUCAPTION, true);
 	ShowDlgItem(IDC_PLUGIN_UNPACKEDFILEEXTENSION_STATIC, unpacker);
 	ShowDlgItem(IDC_PLUGIN_UNPACKEDFILEEXTENSION, unpacker);
 	ResizeDialog(alias, hasScript);
