@@ -129,7 +129,6 @@ void PluginsListDlg::SetPlugins(int sel)
 	m_list.DeleteAllItems();
 	if (sel == 0)
 	{
-		AddPluginsToList(L"URL_PACK_UNPACK");
 		for (const auto& event : plugin::UnpackerEventNames)
 			AddPluginsToList(event.c_str());
 	}

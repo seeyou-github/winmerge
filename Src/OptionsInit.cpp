@@ -21,11 +21,6 @@
 #include "Constants.h"
 #include <Poco/Environment.h>
 
-// Functions to copy values set by installer from HKLM to HKCU.
-static bool OpenHKLM(HKEY *key, const tchar_t* relpath = nullptr);
-static bool OpenHKCU(HKEY *key, const tchar_t* relpath = nullptr);
-static void CopyFromLMtoCU(HKEY lmKey, HKEY cuKey, const tchar_t* valname);
-
 namespace Options
 {
 
@@ -38,7 +33,7 @@ namespace Options
  */
 void Init(COptionsMgr *pOptions)
 {
-	LANGID LangId = GetUserDefaultLangID();
+	LANGID LangId = MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED);
 	pOptions->InitOption(OPT_SELECTED_LANGUAGE, static_cast<int>(LangId));
 
 	// Initialise options (name, default value)
@@ -182,19 +177,6 @@ void Init(COptionsMgr *pOptions)
 	pOptions->InitOption(OPT_CMP_IMG_OVERLAYANIMATIONINTERVAL, 1000, 200, 8000);
 	pOptions->InitOption(OPT_CMP_IMG_OCR_RESULT_TYPE, 0, 0, 2);
 
-	pOptions->InitOption(OPT_CMP_WEB_USERDATAFOLDER_TYPE, 0, 0, 1);
-	pOptions->InitOption(OPT_CMP_WEB_USERDATAFOLDER_PERPANE, true);
-	pOptions->InitOption(OPT_CMP_WEB_FIT_TO_WINDOW, true);
-	pOptions->InitOption(OPT_CMP_WEB_SHOWDIFFERENCES, true);
-	pOptions->InitOption(OPT_CMP_WEB_VIEW_WIDTH, 1024, 1, 9999);
-	pOptions->InitOption(OPT_CMP_WEB_VIEW_HEIGHT, 600, 1, 9999);
-	pOptions->InitOption(OPT_CMP_WEB_ZOOM, 1000, 250, 5000);
-	pOptions->InitOption(OPT_CMP_WEB_USER_AGENT, _T(""));
-	pOptions->InitOption(OPT_CMP_WEB_URL_PATTERN_TO_INCLUDE, _T(""));
-	pOptions->InitOption(OPT_CMP_WEB_URL_PATTERN_TO_EXCLUDE, _T(""));
-	pOptions->InitOption(OPT_CMP_WEB_SYNC_EVENTS, true);
-	pOptions->InitOption(OPT_CMP_WEB_SYNC_EVENT_FLAGS, 0xff);
-
 	pOptions->InitOption(OPT_PROJECTS_PATH, _T(""));
 	pOptions->InitOption(OPT_USE_SYSTEM_TEMP_PATH, true);
 	pOptions->InitOption(OPT_CUSTOM_TEMP_PATH, _T(""));
@@ -267,114 +249,4 @@ void Init(COptionsMgr *pOptions)
 	Options::Project::Init(pOptions);
 }
 
-/**
- * @brief Copy some HKLM values to HKCU.
- * The installer sets HKLM values for "all users". This function copies
- * few of those values for "user" values. E.g. enabling ShellExtension
- * initially for user is done by this function.
- */
-void CopyHKLMValues()
-{
-	HKEY LMKey;
-	HKEY CUKey;
-	if (OpenHKLM(&LMKey))
-	{
-		if (OpenHKCU(&CUKey))
-		{
-			CopyFromLMtoCU(LMKey, CUKey, _T("ContextMenuEnabled"));
-			CopyFromLMtoCU(LMKey, CUKey, _T("Executable"));
-			RegCloseKey(CUKey);
-		}
-		RegCloseKey(LMKey);
-	}
-	if (OpenHKLM(&LMKey, _T("Locale")))
-	{
-		if (OpenHKCU(&CUKey, _T("Locale")))
-		{
-			CopyFromLMtoCU(LMKey, CUKey, _T("LanguageId"));
-			RegCloseKey(CUKey);
-		}
-		RegCloseKey(LMKey);
-	}
-}
-
-}
-
-/**
- * @brief Open HKLM registry key.
- * @param [out] key Pointer to open HKLM key.
- * @param [in] relpath Relative registry path (to WinMerge reg path) to open, or nullptr.
- * @return true if opening succeeded.
- */
-static bool OpenHKLM(HKEY *key, const tchar_t* relpath)
-{
-	tchar_t valuename[256];
-	if (relpath)
-		wsprintf(valuename, _T("%s\\%s"), RegDir, relpath);
-	else
-		lstrcpy(valuename, RegDir);
-	LONG retval = RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-			valuename, 0, KEY_READ, key);
-	if (retval == ERROR_SUCCESS)
-	{
-		return true;
-	}
-	return false;
-}
-
-/**
- * @brief Open HKCU registry key.
- * Opens the HKCU key for WinMerge. If the key does not exist, creates one.
- * @param [out] key Pointer to open HKCU key.
- * @param [in] relpath Relative registry path (to WinMerge reg path) to open, or nullptr.
- * @return true if opening succeeded.
- */
-static bool OpenHKCU(HKEY *key, const tchar_t* relpath)
-{
-	tchar_t valuename[256];
-	if (relpath)
-		wsprintf(valuename, _T("%s\\%s"), RegDir, relpath);
-	else
-		lstrcpy(valuename, RegDir);
-	LONG retval = RegOpenKeyEx(HKEY_CURRENT_USER,
-			valuename, 0, KEY_ALL_ACCESS, key);
-	if (retval == ERROR_SUCCESS)
-	{
-		return true;
-	}
-	else if (retval == ERROR_FILE_NOT_FOUND)
-	{
-		retval = RegCreateKeyEx(HKEY_CURRENT_USER,
-			valuename, 0, nullptr, 0, KEY_ALL_ACCESS, nullptr, key, nullptr);
-		if (retval == ERROR_SUCCESS)
-			return true;
-	}
-	return false;
-}
-
-/**
- * @brief Copy value from HKLM to HKCU.
- * @param [in] lmKey HKLM key from where to copy.
- * @param [in] cuKey HKCU key to where to copy.
- * @param [in] valname Name of the value to copy.
- */
-static void CopyFromLMtoCU(HKEY lmKey, HKEY cuKey, const tchar_t* valname)
-{
-	DWORD len = 0;
-	LONG retval = RegQueryValueEx(cuKey, valname, 0, nullptr, nullptr, &len);
-	if (retval == ERROR_FILE_NOT_FOUND)
-	{
-		retval = RegQueryValueEx(lmKey, valname, 0, nullptr, nullptr, &len);
-		if (retval == ERROR_SUCCESS)
-		{
-			DWORD type = 0;
-			std::vector<BYTE> buf(len);
-			retval = RegQueryValueEx(lmKey, valname, 0, &type, &buf[0], &len);
-			if (retval == ERROR_SUCCESS)
-			{
-				RegSetValueEx(cuKey, valname , 0, type,
-					&buf[0], len);
-			}
-		}
-	}
 }

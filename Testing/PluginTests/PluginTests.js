@@ -214,18 +214,6 @@ function printPluginInfo(p) {
   WScript.Echo("");
 }
 
-function AITest() {
-  var asciiChars = "";
-  var p = GetObject("script: " + ScriptFolder + "\\..\\..\\Plugins\\dlls\\AI.sct");
-  printPluginInfo(p);
-
-  p.PluginOnEvent(0, MergeApp);
-
-  // AIConvertText
-  p.PluginArguments = "Translate the given text into Japanese";
-  WScript.Echo(p.AIConvertText("Hello World!"));
-}
-
 function EditorAddinTest() {
   var asciiChars = "";
   var p = GetObject("script: " + ScriptFolder + "\\..\\..\\Plugins\\dlls\\editor addin.sct");
@@ -753,7 +741,6 @@ function CompareEscapedJavaPropertiesFilesTest() {
   p.PluginOnEvent(1, MergeApp);
 }
 
-// AITest();
 CompareEscapedJavaPropertiesFilesTest();
 EditorAddinTest();
 InsertDateTimeTest();

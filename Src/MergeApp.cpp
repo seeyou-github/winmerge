@@ -156,5 +156,5 @@ AboutInfo::AboutInfo()
 	copyright += verinfo.GetLegalCopyright();
 	copyright += _(" - All rights reserved.");
 
-	website = WinMergeURL;
+	website.clear();
 }

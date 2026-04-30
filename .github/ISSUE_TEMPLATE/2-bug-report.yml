@@ -11,7 +11,7 @@ body:
         Please describe the problem clearly. Steps to reproduce are especially helpful.
 
         If possible, please attach a minimal set of files to reproduce the issue,
-        or `WinMerge.txt` from **Help → Configuration**.
+        or a clear screenshot of the relevant configuration pages.
         Please check for personal information and mask it if necessary.
 
   - type: textarea

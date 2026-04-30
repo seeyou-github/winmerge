@@ -14,7 +14,7 @@
 #define new DEBUG_NEW
 #endif
 
-enum { URL_PACK_UNPACK, FILE_PACK_UNPACK, FILE_FOLDER_PACK_UNPACK, FILE_PREDIFF, ALIAS_PACK_UNPACK, ALIAS_PREDIFF, ALIAS_EDITOR_SCRIPT };
+enum { FILE_PACK_UNPACK, FILE_FOLDER_PACK_UNPACK, FILE_PREDIFF, ALIAS_PACK_UNPACK, ALIAS_PREDIFF, ALIAS_EDITOR_SCRIPT };
 enum { UnpackFile = 0, PackFile = 1, UnpackFolder = 2, PackFolder = 3, IsFolder = 4, PrediffFile = 0 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -178,7 +178,7 @@ void CEditPluginDlg::UpdateControls()
 		m_ctlTab.InsertItem(0, _T("UnpackFile"));
 		m_ctlTab.InsertItem(1, _T("PackFile"));
 	}
-	else if (cursel == URL_PACK_UNPACK || cursel == FILE_FOLDER_PACK_UNPACK)
+	else if (cursel == FILE_FOLDER_PACK_UNPACK)
 	{
 		m_ctlTab.InsertItem(0, _T("UnpackFile"));
 		m_ctlTab.InsertItem(1, _T("PackFile"));
@@ -190,11 +190,10 @@ void CEditPluginDlg::UpdateControls()
 	{
 		m_ctlTab.InsertItem(0, _T("PrediffFile"));
 	}
-	const bool unpacker = (cursel < 3);
-	const bool alias = (cursel > 3);
-	const bool urlhandler = (cursel == 0);
+	const bool unpacker = (cursel == FILE_PACK_UNPACK || cursel == FILE_FOLDER_PACK_UNPACK);
+	const bool alias = (cursel > FILE_PREDIFF);
 	const bool hasScript = alias ? false : HasScript();
-	EnableDlgItem(IDC_PLUGIN_AUTOMATIC, !urlhandler && m_info.m_locationType != internal_plugin::LocationType::InstallationPath);
+	EnableDlgItem(IDC_PLUGIN_AUTOMATIC, m_info.m_locationType != internal_plugin::LocationType::InstallationPath);
 	ShowDlgItem(IDC_PLUGIN_TAB, !alias);
 	ShowDlgItem(IDC_PLUGIN_COMMAND_LINE_STATIC, !alias);
 	ShowDlgItem(IDC_PLUGIN_COMMAND_LINE, !alias);
@@ -221,49 +220,11 @@ static void RemoveMenuItems(CMenu* pPopup, unsigned menuid, int plugintype, int 
 {
 	if (menuid == IDR_POPUP_PLUGIN_COMMAND_LINE_MENU)
 	{
-		if (plugintype == URL_PACK_UNPACK)
-		{
-			if (method == UnpackFile)
-			{
-				for (auto id : {
-					ID_PLUGIN_COMMAND_LINE_SRC_FILE, ID_PLUGIN_COMMAND_LINE_SRC_FOLDER,
-					ID_PLUGIN_COMMAND_LINE_DST_URL, ID_PLUGIN_COMMAND_LINE_DST_URL_PROTOCOL, ID_PLUGIN_COMMAND_LINE_DST_URL_SUFFIX, ID_PLUGIN_COMMAND_LINE_DST_FOLDER })
-					pPopup->RemoveMenu(id, MF_BYCOMMAND);
-			}
-			else if (method == PackFile)
-			{
-				for (auto id : {
-					ID_PLUGIN_COMMAND_LINE_DST_FILE, ID_PLUGIN_COMMAND_LINE_DST_FOLDER,
-					ID_PLUGIN_COMMAND_LINE_SRC_URL, ID_PLUGIN_COMMAND_LINE_SRC_URL_PROTOCOL, ID_PLUGIN_COMMAND_LINE_SRC_URL_SUFFIX, ID_PLUGIN_COMMAND_LINE_SRC_FOLDER })
-					pPopup->RemoveMenu(id, MF_BYCOMMAND);
-			}
-			else if (method == UnpackFolder)
-			{
-				for (auto id : {
-					ID_PLUGIN_COMMAND_LINE_SRC_FILE, ID_PLUGIN_COMMAND_LINE_SRC_FOLDER,
-					ID_PLUGIN_COMMAND_LINE_DST_URL, ID_PLUGIN_COMMAND_LINE_DST_URL_PROTOCOL, ID_PLUGIN_COMMAND_LINE_DST_URL_SUFFIX, ID_PLUGIN_COMMAND_LINE_DST_FILE})
-					pPopup->RemoveMenu(id, MF_BYCOMMAND);
-			}
-			else if (method == PackFolder)
-			{
-				for (auto id : {
-					ID_PLUGIN_COMMAND_LINE_DST_FILE, ID_PLUGIN_COMMAND_LINE_DST_FOLDER,
-					ID_PLUGIN_COMMAND_LINE_SRC_URL, ID_PLUGIN_COMMAND_LINE_SRC_URL_PROTOCOL, ID_PLUGIN_COMMAND_LINE_SRC_URL_SUFFIX, ID_PLUGIN_COMMAND_LINE_SRC_FILE})
-					pPopup->RemoveMenu(id, MF_BYCOMMAND);
-			}
-			else if (method == IsFolder)
-			{
-				for (auto id : {
-					ID_PLUGIN_COMMAND_LINE_SRC_FILE, ID_PLUGIN_COMMAND_LINE_SRC_FOLDER,
-					ID_PLUGIN_COMMAND_LINE_DST_URL, ID_PLUGIN_COMMAND_LINE_DST_URL_PROTOCOL, ID_PLUGIN_COMMAND_LINE_DST_URL_SUFFIX, ID_PLUGIN_COMMAND_LINE_DST_FILE, ID_PLUGIN_COMMAND_LINE_DST_FOLDER })
-					pPopup->RemoveMenu(id, MF_BYCOMMAND);
-			}
-		}
-		else if (plugintype == FILE_PACK_UNPACK || plugintype == FILE_PREDIFF)
+		if (plugintype == FILE_PACK_UNPACK || plugintype == FILE_PREDIFF)
 		{
 			for (auto id : {
-				ID_PLUGIN_COMMAND_LINE_SRC_URL, ID_PLUGIN_COMMAND_LINE_SRC_URL_PROTOCOL, ID_PLUGIN_COMMAND_LINE_SRC_URL_SUFFIX, ID_PLUGIN_COMMAND_LINE_SRC_FOLDER,
-				ID_PLUGIN_COMMAND_LINE_DST_URL, ID_PLUGIN_COMMAND_LINE_DST_URL_PROTOCOL, ID_PLUGIN_COMMAND_LINE_DST_URL_SUFFIX, ID_PLUGIN_COMMAND_LINE_DST_FOLDER })
+				ID_PLUGIN_COMMAND_LINE_SRC_FOLDER,
+				ID_PLUGIN_COMMAND_LINE_DST_FOLDER })
 				pPopup->RemoveMenu(id, MF_BYCOMMAND);
 		}
 		else if (plugintype == FILE_FOLDER_PACK_UNPACK)
@@ -271,29 +232,29 @@ static void RemoveMenuItems(CMenu* pPopup, unsigned menuid, int plugintype, int 
 			if (method == UnpackFile || method == PackFile)
 			{
 				for (auto id : {
-					ID_PLUGIN_COMMAND_LINE_SRC_URL, ID_PLUGIN_COMMAND_LINE_SRC_URL_PROTOCOL, ID_PLUGIN_COMMAND_LINE_SRC_URL_SUFFIX, ID_PLUGIN_COMMAND_LINE_SRC_FOLDER,
-					ID_PLUGIN_COMMAND_LINE_DST_URL, ID_PLUGIN_COMMAND_LINE_DST_URL_PROTOCOL, ID_PLUGIN_COMMAND_LINE_DST_URL_SUFFIX, ID_PLUGIN_COMMAND_LINE_DST_FOLDER })
+					ID_PLUGIN_COMMAND_LINE_SRC_FOLDER,
+					ID_PLUGIN_COMMAND_LINE_DST_FOLDER })
 					pPopup->RemoveMenu(id, MF_BYCOMMAND);
 			}
 			else if (method == UnpackFolder)
 			{
 				for (auto id : {
-					ID_PLUGIN_COMMAND_LINE_SRC_URL, ID_PLUGIN_COMMAND_LINE_SRC_URL_PROTOCOL, ID_PLUGIN_COMMAND_LINE_SRC_URL_SUFFIX, ID_PLUGIN_COMMAND_LINE_SRC_FOLDER,
-					ID_PLUGIN_COMMAND_LINE_DST_URL, ID_PLUGIN_COMMAND_LINE_DST_URL_PROTOCOL, ID_PLUGIN_COMMAND_LINE_DST_URL_SUFFIX, ID_PLUGIN_COMMAND_LINE_DST_FILE})
+					ID_PLUGIN_COMMAND_LINE_SRC_FOLDER,
+					ID_PLUGIN_COMMAND_LINE_DST_FILE})
 					pPopup->RemoveMenu(id, MF_BYCOMMAND);
 			}
 			else if (method == PackFolder)
 			{
 				for (auto id : {
-					ID_PLUGIN_COMMAND_LINE_SRC_URL, ID_PLUGIN_COMMAND_LINE_SRC_URL_PROTOCOL, ID_PLUGIN_COMMAND_LINE_SRC_URL_SUFFIX, ID_PLUGIN_COMMAND_LINE_SRC_FILE,
-					ID_PLUGIN_COMMAND_LINE_DST_URL, ID_PLUGIN_COMMAND_LINE_DST_URL_PROTOCOL, ID_PLUGIN_COMMAND_LINE_DST_URL_SUFFIX, ID_PLUGIN_COMMAND_LINE_DST_FOLDER })
+					ID_PLUGIN_COMMAND_LINE_SRC_FILE,
+					ID_PLUGIN_COMMAND_LINE_DST_FOLDER })
 					pPopup->RemoveMenu(id, MF_BYCOMMAND);
 			}
 			else if (method == IsFolder)
 			{
 				for (auto id : {
-					ID_PLUGIN_COMMAND_LINE_SRC_URL, ID_PLUGIN_COMMAND_LINE_SRC_URL_PROTOCOL, ID_PLUGIN_COMMAND_LINE_SRC_URL_SUFFIX, ID_PLUGIN_COMMAND_LINE_SRC_FOLDER,
-					ID_PLUGIN_COMMAND_LINE_DST_URL, ID_PLUGIN_COMMAND_LINE_DST_URL_PROTOCOL, ID_PLUGIN_COMMAND_LINE_DST_URL_SUFFIX, ID_PLUGIN_COMMAND_LINE_DST_FILE, ID_PLUGIN_COMMAND_LINE_DST_FOLDER })
+					ID_PLUGIN_COMMAND_LINE_SRC_FOLDER,
+					ID_PLUGIN_COMMAND_LINE_DST_FILE, ID_PLUGIN_COMMAND_LINE_DST_FOLDER })
 					pPopup->RemoveMenu(id, MF_BYCOMMAND);
 			}
 		}
@@ -480,7 +441,7 @@ void CEditPluginDlg::OnOK()
 	m_info.m_name = m_strPluginName;
 	m_info.m_description = m_strDescription;
 	m_info.m_fileFilters = m_strExtensions;
-	m_info.m_isAutomatic = (cursel == URL_PACK_UNPACK) ? true : m_bIsAutomatic;
+	m_info.m_isAutomatic = m_bIsAutomatic;
 	m_info.m_arguments = m_strArguments;
 	m_info.m_pipeline = m_strPluginPipeline;
 	m_info.m_extendedProperties.clear();
@@ -508,7 +469,7 @@ void CEditPluginDlg::OnOK()
 		SaveMethod(m_info.m_unpackFile, 0);
 		SaveMethod(m_info.m_packFile, 1);
 	}
-	else if (cursel == URL_PACK_UNPACK || cursel == FILE_FOLDER_PACK_UNPACK)
+	else if (cursel == FILE_FOLDER_PACK_UNPACK)
 	{
 		SaveMethod(m_info.m_unpackFile, 0);
 		SaveMethod(m_info.m_packFile, 1);
@@ -536,7 +497,6 @@ BOOL CEditPluginDlg::OnInitDialog()
 
 	SetDlgItemComboBoxList(IDC_PLUGIN_TYPE,
 		{
-			{ _("URL Handler"), L"URL_PACK_UNPACK" },
 			{ _("File Unpacker"), L"FILE_PACK_UNPACK" },
 			{ _("File or Folder Unpacker"), L"FILE_FOLDER_PACK_UNPACK" },
 			{ _("Prediffer"), L"FILE_PREDIFF" },
@@ -552,7 +512,6 @@ BOOL CEditPluginDlg::OnInitDialog()
 			{ _("Table"), L"Table" },
 			{ I18n::tr("Options dialog|Categories", "Binary"), L"Binary" },
 			{ _("Image"), L"Image" },
-			{ _("Webpage"), L"Webpage" },
 		}, m_strWindowType);
 
 	UpdateControls();

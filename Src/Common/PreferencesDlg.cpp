@@ -60,7 +60,6 @@ CPreferencesDlg::CPreferencesDlg(COptionsMgr *regOptions, SyntaxColors *colors,
 , m_pageCompareTable(regOptions)
 , m_pageCompareBinary(regOptions)
 , m_pageCompareImage(regOptions)
-, m_pageCompareWebPage(regOptions)
 {
 	UNREFERENCED_PARAMETER(nMenuID);
 }
@@ -108,7 +107,6 @@ BOOL CPreferencesDlg::OnInitDialog()
 	AddPage(&m_pageCompareTable, IDS_OPTIONSPG_COMPARE, IDS_OPTIONSPG_TABLECOMPARE);
 	AddPage(&m_pageCompareBinary, IDS_OPTIONSPG_COMPARE, IDS_OPTIONSPG_BINARYCOMPARE);
 	AddPage(&m_pageCompareImage, IDS_OPTIONSPG_COMPARE, IDS_OPTIONSPG_IMAGECOMPARE);
-	AddPage(&m_pageCompareWebPage, IDS_OPTIONSPG_COMPARE, IDS_OPTIONSPG_WEBPAGECOMPARE);
 	AddPage(&m_pageMessageBoxes, IDS_OPTIONSPG_MESSAGEBOXES);
 	AddPage(&m_pageEditor, IDS_OPTIONSPG_EDITOR, IDS_OPTIONSPG_GENEDITOR);
 	AddPage(&m_pageEditorCompareMerge, IDS_OPTIONSPG_EDITOR, IDS_OPTIONSPG_EDITOR_COMPAREMERGE);
@@ -150,6 +148,7 @@ void CPreferencesDlg::OnOK()
 	m_pphost.OnOK();
 
 	SaveOptions();
+	m_pOptionsMgr->FlushOptions();
 
 	AfxGetApp()->WriteProfileInt(_T("Settings"), _T("OptStartPage"), m_pphost.GetActiveIndex());
 }
@@ -297,7 +296,6 @@ void CPreferencesDlg::ReadOptions(bool bUpdate)
 	m_pageCompareTable.ReadOptions();
 	m_pageCompareBinary.ReadOptions();
 	m_pageCompareImage.ReadOptions();
-	m_pageCompareWebPage.ReadOptions();
 	m_pageMessageBoxes.ReadOptions();
 	m_pageEditor.ReadOptions();
 	m_pageEditorCompareMerge.ReadOptions();
@@ -348,7 +346,6 @@ void CPreferencesDlg::SaveOptions()
 	m_pageCompareTable.WriteOptions();
 	m_pageCompareBinary.WriteOptions();
 	m_pageCompareImage.WriteOptions();
-	m_pageCompareWebPage.WriteOptions();
 	m_pageMessageBoxes.WriteOptions();
 	m_pageEditor.WriteOptions();
 	m_pageEditorCompareMerge.WriteOptions();
@@ -407,6 +404,7 @@ void CPreferencesDlg::OnExportButton()
 		// Save all new settings before exporting
 		m_pphost.UpdatePagesData();
 		SaveOptions();
+		m_pOptionsMgr->FlushOptions();
 
 		if (m_pOptionsMgr->ExportOptions(settingsFile, true) == COption::OPT_OK)
 			I18n::MessageBox(IDS_OPT_EXPORT_DONE, MB_ICONINFORMATION);

@@ -51,7 +51,6 @@ begin
 		if UsingWinNT() = true then begin
 
 			// Get current path, split into an array
-			RegQueryStringValue(HKEY_CURRENT_USER, 'Environment', 'Path', oldpath);
 			oldpath := oldpath + ';';
 			i := 0;
 			while (Pos(';', oldpath) > 0) do begin
@@ -84,7 +83,6 @@ begin
 				newpath := newpath + ';' + pathdir[d];
 
 			// Write new path
-			RegWriteStringValue(HKEY_CURRENT_USER, 'Environment', 'Path', newpath);
 
 		// Modify Win9x path
 		end else begin

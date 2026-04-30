@@ -400,7 +400,7 @@ namespace
 		EXPECT_FALSE(paths::IsURL(_T("C:\\file.txt")));
 		EXPECT_FALSE(paths::IsURL(_T("\\\\?\\C:\\file.txt")));
 		EXPECT_FALSE(paths::IsURL(_T("\\\\server\\file.txt")));
-		EXPECT_TRUE(paths::IsURL(_T("https://server/")));
+		EXPECT_FALSE(paths::IsURL(_T("https://server/")));
 	}
 
 }  // namespace

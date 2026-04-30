@@ -24,7 +24,6 @@
 #include "OptionsMgr.h"
 #include "FileOpenFlags.h"
 #include "Logger.h"
-#include <Poco/Channel.h>
 #include "DarkModeLib.h"
 #include "WindowsManager.h"
 #include "TempFile.h"
@@ -44,7 +43,6 @@ struct FileLocation;
 class DropHandler;
 class CMainFrame;
 class CImgMergeFrame;
-class CWebPageDiffFrame;
 class DirWatcher;
 class COutputDoc;
 class CTempPathContext;
@@ -81,7 +79,6 @@ public:
 		FRAME_FILE, /**< File compare frame. */
 		FRAME_HEXFILE, /**< Hex file compare frame. */
 		FRAME_IMGFILE, /**< Image file compare frame. */
-		FRAME_WEBPAGE, /**< Web page compare frame. */
 		FRAME_OTHER, /**< No frame? */
 	};
 
@@ -133,12 +130,7 @@ public:
 		String m_strSaveAsPath; /**< "3rd path" where output saved if given */
 	};
 
-	struct OpenWebPageParams : virtual public OpenParams
-	{
-		virtual ~OpenWebPageParams() {}
-	};
-
-	struct OpenAutoParams : public OpenTableFileParams, public OpenBinaryFileParams, public OpenImageFileParams, public OpenWebPageParams, public OpenFolderParams
+	struct OpenAutoParams : public OpenTableFileParams, public OpenBinaryFileParams, public OpenImageFileParams, public OpenFolderParams
 	{
 		OpenAutoParams() = default;
 		virtual ~OpenAutoParams() {}
@@ -157,7 +149,6 @@ public:
 	HMENU NewMergeViewMenu();
 	HMENU NewHexMergeViewMenu();
 	HMENU NewImgMergeViewMenu();
-	HMENU NewWebPageDiffViewMenu();
 	HMENU NewOpenViewMenu();
 	HMENU NewDefaultMenu(int ID = 0);
 	void UpdatePrediffersMenu(CMenu* pPredifferMenu);
@@ -213,10 +204,6 @@ public:
 		const fileopenflags_t dwFlags[], const String strDesc[], const String& sReportFile = _T(""),
 		const PackingInfo * infoUnpacker = nullptr, const PrediffingInfo * infoPrediffer = nullptr,
 		const OpenImageFileParams *pOpenParams = nullptr);
-	bool ShowWebDiffDoc(IDirDoc * pDirDoc, int nFiles, const FileLocation fileloc[],
-		const fileopenflags_t dwFlags[], const String strDesc[], const String& sReportFile = _T(""),
-		const PackingInfo * infoUnpacker = nullptr, const PrediffingInfo * infoPrediffer = nullptr,
-		const OpenWebPageParams *pOpenParams = nullptr);
 	bool ShowDirDoc(IDirDoc* pDirDoc, int nFiles, const FileLocation fileloc[],
 		const fileopenflags_t dwFlags[], const String strDesc[], const String& sReportFile = _T(""),
 		const PackingInfo* infoUnpacker = nullptr, const PrediffingInfo* infoPrediffer = nullptr,
@@ -275,8 +262,6 @@ protected:
 	CMDITabBar m_wndTabBar;
 	COutputBar m_wndOutputBar;
 	CWindowsManager m_wndManager;
-	Poco::Channel::Ptr m_pLogChannel;
-	int m_logging;
 
 	// Tweak MDI client window behavior
 	class CMDIClient : public CWnd
@@ -349,7 +334,6 @@ protected:
 		MENU_DIRVIEW,
 		MENU_HEXMERGEVIEW,
 		MENU_IMGMERGEVIEW,
-		MENU_WEBPAGEDIFFVIEW,
 		MENU_OPENVIEW,
 		MENU_COUNT, // Add new items before this item
 	};
@@ -384,7 +368,6 @@ protected:
 
 	std::unique_ptr<BCMenu> m_pMenus[MENU_COUNT]; /**< Menus for different views */
 	std::unique_ptr<BCMenu> m_pImageMenu;
-	std::unique_ptr<BCMenu> m_pWebPageMenu;
 	std::vector<TempFilePtr> m_tempFiles; /**< List of possibly needed temp files. */
 	std::vector<std::shared_ptr<TempFolder>> m_tempFolders; /**< Temp folders for "New Folder" comparisons. */
 	DropHandler *m_pDropHandler;
@@ -416,7 +399,6 @@ protected:
 	afx_msg void OnPluginPrediffMode(UINT nID);
 	afx_msg void OnUpdatePluginRelatedMenu(CCmdUI* pCmdUI);
 	afx_msg void OnReloadPlugins();
-	afx_msg void OnSaveConfigData();
 	template <int nFiles, unsigned nID>
 	afx_msg void OnFileNew() { DoFileNew(nID, nFiles); }
 	afx_msg void OnToolsFilters();
@@ -440,7 +422,6 @@ protected:
 	afx_msg void OnUpdateToolbarSize(CCmdUI* pCmdUI);
 	afx_msg BOOL OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnHelpReleasenotes();
-	afx_msg void OnHelpTranslations();
 	afx_msg void OnFileOpenConflict();
 	afx_msg void OnFileOpenClipboard();
 	afx_msg void OnPluginsList();
@@ -503,7 +484,6 @@ private:
 	DirDocList &GetAllDirDocs();
 	HexMergeDocList &GetAllHexMergeDocs();
 	std::vector<CImgMergeFrame *> GetAllImgMergeFrames();
-	std::vector<CWebPageDiffFrame *> GetAllWebPageDiffFrames();
 	void UpdateFont(FRAMETYPE frame);
 	BOOL CreateToolbar();
 	CMergeEditView * GetActiveMergeEditView();

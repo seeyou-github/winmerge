@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "Shell.h"
 #include "UnicodeString.h"
-#include "paths.h"
 #include <windows.h>
 
 namespace shell
@@ -27,17 +26,6 @@ void OpenWith(const tchar_t * szFile)
 	if (!GetSystemDirectory(sysdir, MAX_PATH)) return;
 	String arg = String(_T("shell32.dll,OpenAs_RunDLL ")) + szFile;
 	ShellExecute(::GetDesktopWindow(), 0, _T("RUNDLL32.EXE"), arg.c_str(), sysdir, SW_SHOWNORMAL);
-}
-
-/**
- * @brief Open file, if it exists, else open url
- */
-void OpenFileOrUrl(const tchar_t * szFile, const tchar_t * szUrl)
-{
-	if (paths::DoesPathExist(szFile) == paths::IS_EXISTING_FILE)
-		ShellExecute(nullptr, _T("open"), _T("notepad.exe"), szFile, nullptr, SW_SHOWNORMAL);
-	else
-		Open(szUrl);
 }
 
 /**

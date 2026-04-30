@@ -19,12 +19,6 @@
 [submodule "Externals/jq"]
 	path = Externals/jq
 	url = https://github.com/stedolan/jq
-[submodule "Externals/wil"]
-	path = Externals/wil
-	url = https://github.com/microsoft/wil
-[submodule "Externals/winwebdiff"]
-	path = Externals/winwebdiff
-	url = https://github.com/WinMerge/winwebdiff
 [submodule "Externals/md4c"]
 	path = Externals/md4c
 	url = https://github.com/mity/md4c

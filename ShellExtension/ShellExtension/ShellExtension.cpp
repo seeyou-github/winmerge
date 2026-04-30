@@ -29,7 +29,6 @@
 #include <initguid.h>
 #include "ShellExtension.h"
 #include "ShellExtension_i.c"
-#include "../Common/RegKey.h"
 
 class CWinMergeShellModule : public ATL::CAtlDllModuleT< CWinMergeShellModule >
 {
@@ -61,51 +60,23 @@ STDAPI DllGetClassObject(_In_ REFCLSID rclsid, _In_ REFIID riid, _Outptr_ LPVOID
 	return _AtlModule.DllGetClassObject(rclsid, riid, ppv);
 }
 
-// DllRegisterServer - Adds entries to the system registry.
 _Use_decl_annotations_
 STDAPI DllRegisterServer(void)
 {
-	// registers object, typelib and all interfaces in typelib
-	HRESULT hr = _AtlModule.DllRegisterServer();
-	return hr;
+	return E_NOTIMPL;
 }
 
-// DllUnregisterServer - Removes entries from the system registry.
 _Use_decl_annotations_
 STDAPI DllUnregisterServer(void)
 {
-	HRESULT hr = _AtlModule.DllUnregisterServer();
-	return hr;
+	return E_NOTIMPL;
 }
 
-// DllInstall - Adds/Removes entries to the system registry per user per machine.
 STDAPI DllInstall(BOOL bInstall, _In_opt_  LPCWSTR pszCmdLine)
 {
-	HRESULT hr = E_FAIL;
-	static const wchar_t szUserSwitch[] = L"user";
-
-	if (pszCmdLine != nullptr)
-	{
-		if (_wcsnicmp(pszCmdLine, szUserSwitch, _countof(szUserSwitch)) == 0)
-		{
-			ATL::AtlSetPerUserRegistration(true);
-		}
-	}
-
-	if (bInstall)
-	{
-		hr = DllRegisterServer();
-		if (FAILED(hr))
-		{
-			DllUnregisterServer();
-		}
-	}
-	else
-	{
-		hr = DllUnregisterServer();
-	}
-
-	return hr;
+	UNREFERENCED_PARAMETER(bInstall);
+	UNREFERENCED_PARAMETER(pszCmdLine);
+	return E_NOTIMPL;
 }
 
 

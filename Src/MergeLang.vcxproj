@@ -179,8 +179,8 @@
     <PostBuildEvent>
       <Command>mkdir $(OutDir)\Languages\ 2&gt; NUL
 mkdir $(OutDir)\Languages\ShellExtension 2&gt; NUL
-copy /Y "$(ProjectDir)..\Translations\WinMerge\*.po" "$(OutDir)\Languages\"
-copy /Y "$(ProjectDir)..\Translations\ShellExtension\*.po" "$(OutDir)\Languages\ShellExtension"</Command>
+copy /Y "$(ProjectDir)..\Translations\WinMerge\ChineseSimplified.po" "$(OutDir)\Languages\"
+copy /Y "$(ProjectDir)..\Translations\ShellExtension\ChineseSimplified.po" "$(OutDir)\Languages\ShellExtension"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -206,11 +206,8 @@ set LIB=
 powershell -ExecutionPolicy ByPass -File UpdatePoFilesFromPotFile.ps1
 if "%POT_UPDATED%" == "true" (
   pushd ..
-  for %%i in ("%LOCALAPPDATA%\Programs\Python\Python39" "C:\Python39") do (
-    if exist "%%~i\python.exe" (
-      "%%~i\python.exe" GetTranslationsStatus.py
-    )
-  ) 
+  python GetTranslationsStatus.py
+  if errorlevel 1 if exist "C:\Python39\python.exe" "C:\Python39\python.exe" GetTranslationsStatus.py
   popd
 )
 popd
@@ -225,7 +222,6 @@ popd
     <None Include="..\Translations\ShellExtension\Bulgarian.po" />
     <None Include="..\Translations\ShellExtension\Catalan.po" />
     <None Include="..\Translations\ShellExtension\ChineseSimplified.po" />
-    <None Include="..\Translations\ShellExtension\ChineseTraditional.po" />
     <None Include="..\Translations\ShellExtension\Corsican.po" />
     <None Include="..\Translations\ShellExtension\CreateMasterPotFile.js" />
     <None Include="..\Translations\ShellExtension\Croatian.po" />
@@ -268,7 +264,6 @@ popd
     <None Include="..\Translations\WinMerge\Bulgarian.po" />
     <None Include="..\Translations\WinMerge\Catalan.po" />
     <None Include="..\Translations\WinMerge\ChineseSimplified.po" />
-    <None Include="..\Translations\WinMerge\ChineseTraditional.po" />
     <None Include="..\Translations\WinMerge\Corsican.po" />
     <None Include="..\Translations\WinMerge\CreateMasterPotFile.js" />
     <None Include="..\Translations\WinMerge\Croatian.po" />
@@ -329,11 +324,8 @@ set LIB=
 powershell -ExecutionPolicy ByPass -File UpdatePoFilesFromPotFile.ps1
 if "%POT_UPDATED%" == "true" (
   pushd ..
-  for %%i in ("%LOCALAPPDATA%\Programs\Python\Python39" "C:\Python39") do (
-    if exist "%%~i\python.exe" (
-      "%%~i\python.exe" GetTranslationsStatus.py
-    )
-  ) 
+  python GetTranslationsStatus.py
+  if errorlevel 1 if exist "C:\Python39\python.exe" "C:\Python39\python.exe" GetTranslationsStatus.py
   popd
 )
 popd

@@ -12,7 +12,6 @@
 #include <vector>
 #include <list>
 #include <windows.h>
-#include <Shlwapi.h>
 #include "InternalPlugins.h"
 #include "MergeApp.h"
 #include "paths.h"
@@ -522,25 +521,6 @@ protected:
 	String replaceMacros(const String& cmd, const String & fileSrc, const String& fileDst)
 	{
 		String command = cmd;
-		if (paths::IsURL(fileSrc))
-		{
-			PARSEDURL parsedURL{sizeof(PARSEDURL)};
-			ParseURL(fileSrc.c_str(), &parsedURL);
-			strutils::replace(command, _T("${SRC_URL}"), fileSrc);
-			strutils::replace(command, _T("${SRC_URL_PROTOCOL}"), String{ parsedURL.pszProtocol, parsedURL.cchProtocol });
-			strutils::replace(command, _T("${SRC_URL_SUFFIX}"), 
-				parsedURL.pszSuffix ? parsedURL.pszSuffix : _T(""));
-		}
-		if (paths::IsURL(fileDst))
-		{
-			PARSEDURL parsedURL{sizeof(PARSEDURL)};
-			ParseURL(fileDst.c_str(), &parsedURL);
-			strutils::replace(command, _T("${DST_URL}"), fileDst);
-			strutils::replace(command, _T("${DST_URL_PROTOCOL}"), String{ parsedURL.pszProtocol, parsedURL.cchProtocol });
-			strutils::replace(command, _T("${DST_URL_SUFFIX}"), 
-				parsedURL.pszSuffix ? parsedURL.pszSuffix : _T(""));
-		}
-
 		std::vector<String> args;
 		std::vector<String> macroNames = getMacroNames(cmd);
 		for (const auto& name : macroNames)

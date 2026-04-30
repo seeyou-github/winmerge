@@ -111,7 +111,7 @@ static String ReplaceAppDataFolderOrUserProfileFolder(const String& path)
 	String appData = env::GetAppDataPath();
 	if (tc::tcsstr(path.c_str(), appData.c_str()))
 	{
-		strutils::replace(result, appData, _T("%APPDATA%"));
+		strutils::replace(result, appData, _T("AppData\\Data"));
 		return result;
 	}
 	String userProfile = env::ExpandEnvironmentVariables(_T("%USERPROFILE%"));

@@ -51,7 +51,6 @@ END
 STRINGTABLE
 BEGIN
     IDS_PLUGIN_PROCESS_TYPE7 "Decompilation"
-    IDS_PLUGIN_PROCESS_TYPE8 "URL Handling"
     IDS_PLUGIN_PROCESS_TYPE9 "Decoding / Encoding"
     IDS_PLUGIN_MENU_CAPTION1 "Make Uppercase"
     IDS_PLUGIN_MENU_CAPTION2 "Make Lowercase"
@@ -101,7 +100,6 @@ BEGIN
     IDS_PLUGIN_MENU_CAPTION38 "Disassemble JVM Bytecode"
     IDS_PLUGIN_MENU_CAPTION39 "Disassemble IL Code"
     IDS_PLUGIN_MENU_CAPTION40 "Disassemble Native Code"
-    IDS_PLUGIN_MENU_CAPTION41 "Convert Text with AI..."
     IDS_PLUGIN_MENU_CAPTION42 "Unescape Java properties files"
     IDS_PLUGIN_MENU_CAPTION43 "Decompile Java (CFR)"
 END
@@ -189,17 +187,11 @@ BEGIN
 			    "Ignore leading line numbers (e.g., NC, BASIC)."
     IDS_PLUGIN_DESCRIPTION50 "Prediff Line Filter"
     IDS_PLUGIN_DESCRIPTION51 "Date and time insertion"
-    IDS_PLUGIN_DESCRIPTION52
-                            "HTTP URL Scheme Handler (curl).\r\nArguments: curl command line options."
 END
 
 STRINGTABLE
 BEGIN
-    IDS_PLUGIN_DESCRIPTION53 
-                            "Windows Registry URL Scheme Handler.\r\nArguments: reg.exe command line options."
     IDS_PLUGIN_DESCRIPTION54 "Basic text functions"
-    IDS_PLUGIN_DESCRIPTION55 "AI-assisted text conversion"
-    IDS_PLUGIN_DESCRIPTION56 "Text converter (OpenAI API).\r\nUsage: AIConvertText PROMPT"
     IDS_PLUGIN_DESCRIPTION57 "Unescape and display escaped Java properties files."
     IDS_PLUGIN_DESCRIPTION58 "Java decompiler (CFR).\r\nDecompiles .class files into readable Java source code.\r\nArguments: CFR command line options."
 END
@@ -312,28 +304,6 @@ BEGIN
     IDS_PLUGIN_APPLYPATCH_STR5 "Folder '%1' does not exist"
     IDS_PLUGIN_APPLYPATCH_STR6 
                             "Do not use '-p0' for patch files with absolute paths"
-END
-
-STRINGTABLE
-BEGIN
-    IDS_PLUGIN_EDITORADDIN_STR1 
-                            "AI.sct WinMerge Plugin Options"
-    IDS_PLUGIN_EDITORADDIN_STR2
-                            "Enter prompt"
-    IDS_PLUGIN_EDITORADDIN_STR3 
-                            "Enter OpenAI API key.\r\n- Requires OpenAI registration (fees may apply).\r\n- Key stored in env var %1."
-    IDS_PLUGIN_EDITORADDIN_STR4
-                            "Environment variable name for OpenAI API key"
-    IDS_PLUGIN_EDITORADDIN_STR5
-                            "OpenAI API key"
-    IDS_PLUGIN_EDITORADDIN_STR6
-                            "Temperature"
-    IDS_PLUGIN_EDITORADDIN_STR7
-                            "Maximum length"
-    IDS_PLUGIN_EDITORADDIN_STR8
-                            "Model"
-    IDS_PLUGIN_EDITORADDIN_STR9
-                            "OpenAI API key changed. Restart to apply."
 END
 
 #endif    // English (United States) resources

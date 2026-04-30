@@ -4,9 +4,9 @@
 #include "UnicodeString.h"
 #include "unicoder.h"
 #include "OptionsMgr.h"
-#include "RegOptionsMgr.h"
+#include "IniOptionsMgr.h"
 
-CRegOptionsMgr m_optionsMgr(_T("Thingamahoochie\\WinMerge\\"));
+CIniOptionsMgr m_optionsMgr(_T("FolderCompare.ini"));
 
 COptionsMgr * GetOptionsMgr()
 {

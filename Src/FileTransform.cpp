@@ -303,52 +303,13 @@ ExpandAliases(const String& pluginPipeline, const String& filteredFilenames, con
 	return pipelineResolved;
 }
 
-bool PackingInfo::GetPackUnpackPlugin(const String& filteredFilenames, bool bUrl, bool bReverse,
+bool PackingInfo::GetPackUnpackPlugin(const String& filteredFilenames, bool bReverse,
 	std::vector<std::tuple<PluginInfo*, uint8_t, std::vector<String>, bool>>& plugins,
 	String *pPluginPipelineResolved, String& errorMessage) const
 {
 	auto result = ExpandAliases(this->m_PluginPipeline, filteredFilenames, L"ALIAS_PACK_UNPACK", errorMessage);
 	if (!errorMessage.empty())
 		return false;
-	if (bUrl)
-	{
-		uint8_t targetFlags = 0xff;
-		std::vector<String> args;
-		const auto filenames = strutils::split(filteredFilenames, '|');
-		std::vector<std::pair<PluginInfo*, bool>> pluginInfos;
-		for (int i = 0; i < filenames.size(); ++i)
-		{
-			bool bWithFile = true;
-			const String filename{ filenames[i].data(), filenames[i].size() };
-			PluginInfo* plugin = nullptr;
-			plugin = CAllThreadsScripts::GetActiveSet()->GetAutomaticPluginByFilter(L"URL_PACK_UNPACK", filename);
-			pluginInfos.push_back({ plugin, bWithFile });
-		}
-		if (!filenames.empty() &&
-			std::all_of(pluginInfos.begin() + 1, pluginInfos.end(), 
-				[&](const auto& elem) { return elem == pluginInfos.front(); }))
-		{
-			const auto& pluginInfo = pluginInfos.front();
-			if (pluginInfo.first)
-			{
-				plugins.insert(bReverse ? plugins.begin() : plugins.end(),
-					{ pluginInfo.first, targetFlags, args, pluginInfo.second });
-			}
-		}
-		else
-		{
-			for (int i = 0; i < pluginInfos.size(); ++i)
-			{
-				const auto& pluginInfo = pluginInfos[i];
-				if (isTargetInFlags(i, targetFlags) && pluginInfo.first)
-				{
-					uint8_t targetFlags2 = 1 << i;
-					plugins.insert(bReverse ? plugins.begin() : plugins.end(),
-						{ pluginInfo.first, targetFlags2, args, pluginInfo.second });
-				}
-			}
-		}
-	}
 	std::vector<PluginForFile::PipelineItem> pipelineResolved;
 	for (auto& [pluginName, targetFlags, args, quoteChar] : result)
 	{
@@ -445,14 +406,13 @@ bool PackingInfo::GetPackUnpackPlugin(const String& filteredFilenames, bool bUrl
 bool PackingInfo::pack(int target, String& filepath, const String& dstFilepath, const std::vector<int>& handlerSubcodes, const std::vector<StringView>& variables) const
 {
 	// no handler : return true
-	bool bUrl = paths::IsURL(dstFilepath);
-	if (m_PluginPipeline.empty() && !bUrl)
+	if (m_PluginPipeline.empty())
 		return true;
 
 	// control value
 	String errorMessage;
 	std::vector<std::tuple<PluginInfo*, uint8_t, std::vector<String>, bool>> plugins;
-	if (!GetPackUnpackPlugin(_T(""), bUrl, true, plugins, nullptr, errorMessage))
+	if (!GetPackUnpackPlugin(_T(""), true, plugins, nullptr, errorMessage))
 	{
 		AppErrorMessageBox(errorMessage);
 		return false;
@@ -489,8 +449,7 @@ bool PackingInfo::pack(int target, String& filepath, const String& dstFilepath, 
 		{
 			// use a temporary dest name
 			String srcFileName = bufferData.GetDataFileAnsi(); // <-Call order is important
-			String dstFileName = plugin->m_event == L"URL_PACK_UNPACK" ?
-				dstFilepath : bufferData.GetDestFileName(); // <-Call order is important
+			String dstFileName = bufferData.GetDestFileName(); // <-Call order is important
 			bHandled = plugin::InvokePackFile(srcFileName,
 				dstFileName,
 				bufferData.GetNChanged(),
@@ -530,13 +489,10 @@ bool PackingInfo::Packing(int target, const String& srcFilepath, const String& d
 		return false;
 	try
 	{
-		if (!paths::IsURL(dstFilepath))
-		{
-			TFile file1(csTempFileName);
-			file1.copyTo(dstFilepath);
-			if (srcFilepath != csTempFileName)
-				file1.remove();
-		}
+		TFile file1(csTempFileName);
+		file1.copyTo(dstFilepath);
+		if (srcFilepath != csTempFileName)
+			file1.remove();
 		return true;
 	}
 	catch (Poco::Exception& e)
@@ -554,14 +510,13 @@ bool PackingInfo::Unpacking(int target, std::vector<int>* handlerSubcodes, Strin
 		handlerSubcodes->clear();
 
 	// no handler : return true
-	bool bUrl = paths::IsURL(filepath);
-	if (m_PluginPipeline.empty() && !bUrl)
+	if (m_PluginPipeline.empty())
 		return true;
 
 	// control value
 	String errorMessage;
 	std::vector<std::tuple<PluginInfo*, uint8_t, std::vector<String>, bool>> plugins;
-	if (!GetPackUnpackPlugin(filteredText, bUrl, false, plugins, &m_PluginPipeline, errorMessage))
+	if (!GetPackUnpackPlugin(filteredText, false, plugins, &m_PluginPipeline, errorMessage))
 	{
 		AppErrorMessageBox(errorMessage);
 		return false;
@@ -643,7 +598,7 @@ String PackingInfo::GetUnpackedFileExtension(int target, const String& filteredF
 	String ext;
 	String errorMessage;
 	std::vector<std::tuple<PluginInfo*, uint8_t, std::vector<String>, bool>> plugins;
-	if (GetPackUnpackPlugin(filteredFilenames, false, false, plugins, nullptr, errorMessage))
+	if (GetPackUnpackPlugin(filteredFilenames, false, plugins, nullptr, errorMessage))
 	{
 		for (auto& [plugin, targetFlags, args, bWithFile] : plugins)
 		{
@@ -662,8 +617,6 @@ String PackingInfo::GetUnpackedFileExtension(int target, const String& filteredF
 					preferredWindowType = 2;
 				else if (preferredWindowTypeStr == L"Image")
 					preferredWindowType = 3;
-				else if (preferredWindowTypeStr == L"Webpage")
-					preferredWindowType = 4;
 			}
 		}
 	}

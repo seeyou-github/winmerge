@@ -191,7 +191,7 @@ Merge7z::Format *ArchiveGuessFormat(const String& path)
 	// Default to Merge7z*.dll
 
 	Merge7z::Format* pFormat = Merge7zFormatRegister::GuessFormat(path2);
-	if (pFormat == nullptr && !paths::IsURL(path2))
+	if (pFormat == nullptr)
 	{
 		auto* infoUnpacker = Merge7zFormatMergePluginImpl::GetPackingInfo();
 		const auto& pluginPipeline = infoUnpacker->GetPluginPipeline();

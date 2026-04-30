@@ -58,7 +58,7 @@ void PropRegistry::WriteOptions()
 
 BOOL PropRegistry::OnInitDialog()
 {
-	SetDlgItemComboBoxList(IDC_USERDATA_LOCATION, { _("AppData (Roaming) folder"), _("Documents folder") });
+	SetDlgItemComboBoxList(IDC_USERDATA_LOCATION, { _("AppData\\Data folder"), _("AppData\\Data folder") });
 	OptionsPanel::OnInitDialog();
 	m_tooltips.Create(this);
 	m_tooltips.SetMaxTipWidth(600);

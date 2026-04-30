@@ -175,7 +175,7 @@ public:
 namespace plugin
 {
 
-inline const std::vector<std::wstring> ProtocolHanlderEventNames = { L"URL_PACK_UNPACK" };
+inline const std::vector<std::wstring> ProtocolHanlderEventNames = {};
 inline const std::vector<std::wstring> UnpackerEventNames = { L"BUFFER_PACK_UNPACK", L"FILE_PACK_UNPACK", L"FILE_FOLDER_PACK_UNPACK", L"ALIAS_PACK_UNPACK" };
 inline const std::vector<std::wstring> PredifferEventNames = { L"BUFFER_PREDIFF", L"FILE_PREDIFF", L"ALIAS_PREDIFF" };
 inline const std::vector<std::wstring> EditorScriptEventNames = { L"EDITOR_SCRIPT", L"ALIAS_EDITOR_SCRIPT" };
@@ -240,15 +240,15 @@ bool InvokeUnpackFile(const String& fileSource, const String& fileDest, int & nC
  */
 bool InvokePackFile(const String& fileSource, const String& fileDest, int & nChanged, LPDISPATCH piScript, int subCode);
 /**
- * @brief Call the plugin "IsFolder" method, event FILE_FOLDER_PACK_UNPACK or URL_PACK_UNPACK
+ * @brief Call the plugin "IsFolder" method, event FILE_FOLDER_PACK_UNPACK
  */
 bool InvokeIsFolder(const String& file, IDispatch *piScript);
 /**
- * @brief Call the plugin "UnpackFolder" method, event FILE_FOLDER_PACK_UNPACK or URL_PACK_UNPACK
+ * @brief Call the plugin "UnpackFolder" method, event FILE_FOLDER_PACK_UNPACK
  */
 bool InvokeUnpackFolder(const String& fileSource, const String& folderDest, int & nChanged, IDispatch *piScript, int & subCode);
 /**
- * @brief Call the plugin "PackFolder" method, event FILE_FOLDER_PACK_UNPACK or URL_PACK_UNPACK
+ * @brief Call the plugin "PackFolder" method, event FILE_FOLDER_PACK_UNPACK
  */
 bool InvokePackFolder(const String& folderSource, const String& fileDest, int & nChanged, IDispatch *piScript, int subCode);
 /**

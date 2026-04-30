@@ -52,9 +52,7 @@ begin
 
 			// Get current path, split into an array
 			if IsAdminInstallMode() = true then begin
-				RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment', 'Path', oldpath);
 			end else begin
-				RegQueryStringValue(HKEY_CURRENT_USER, 'Environment', 'Path', oldpath);
 			end;
 			oldpath := oldpath + ';';
 			i := 0;
@@ -89,9 +87,7 @@ begin
 
 			// Write new path
 			if IsAdminInstallMode() = true then begin
-				RegWriteStringValue(HKEY_LOCAL_MACHINE, 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment', 'Path', newpath);
 			end else begin
-				RegWriteStringValue(HKEY_CURRENT_USER, 'Environment', 'Path', newpath);
 			end;
 
 		// Modify Win9x path

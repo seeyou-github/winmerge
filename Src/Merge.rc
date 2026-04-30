@@ -264,47 +264,6 @@ BEGIN
     END
 END
 
-IDR_POPUP_WEBPAGEDIFFVIEW MENU
-BEGIN
-    POPUP "_POPUP_"
-    BEGIN
-        MENUITEM "View &Differences",           ID_WEB_VIEWDIFFERENCES
-        POPUP "Co&mpare"
-        BEGIN
-            MENUITEM "&Screenshots",                ID_WEB_COMPARE_SCREENSHOTS
-            MENUITEM "&Full Size Screenshots",      ID_WEB_COMPARE_FULLSIZE_SCREENSHOTS
-            MENUITEM "&HTMLs",                      ID_WEB_COMPARE_HTMLS
-            MENUITEM "&Texts",                      ID_WEB_COMPARE_TEXTS
-            MENUITEM "&Resource Trees",             ID_WEB_COMPARE_RESOURCETREES
-        END
-        POPUP "&Size"
-        BEGIN
-            MENUITEM "Fit to Window",               ID_WEB_SIZE_FIT_TO_WINDOW
-            MENUITEM "320x512",                     ID_WEB_SIZE_320x512
-            MENUITEM "375x600",                     ID_WEB_SIZE_375x600
-            MENUITEM "1024x640",                    ID_WEB_SIZE_1024x640
-            MENUITEM "1280x800",                    ID_WEB_SIZE_1280x800
-            MENUITEM "1440x900",                    ID_WEB_SIZE_1440x900
-        END
-        POPUP "&Event Sync"
-        BEGIN
-            MENUITEM "&Enabled",                    ID_WEB_SYNC_ENABLED
-            MENUITEM SEPARATOR
-            MENUITEM "&Scroll",                     ID_WEB_SYNC_SCROLL
-            MENUITEM "&Click",                      ID_WEB_SYNC_CLICK
-            MENUITEM "&Input",                      ID_WEB_SYNC_INPUT
-            MENUITEM "&Go Back/Forward",            ID_WEB_SYNC_GOBACKFORWARD
-        END
-        POPUP "Clear &Browsing Data"
-        BEGIN
-            MENUITEM "&Disk Cache",                 ID_WEB_CLEAR_DISK_CACHE
-            MENUITEM "&Cookies",                    ID_WEB_CLEAR_COOKIES
-            MENUITEM "&Browsing History",           ID_WEB_CLEAR_BROWSING_HISTORY
-            MENUITEM "&All Profiles",               ID_WEB_CLEAR_ALL_PROFILE
-        END
-    END
-END
-
 IDR_MAINFRAME MENU
 BEGIN
     POPUP "&File"
@@ -315,7 +274,6 @@ BEGIN
             MENUITEM "T&able",                      ID_FILE_NEW_TABLE
             MENUITEM "&Binary",                     ID_FILE_NEW_HEX
             MENUITEM "&Image",                      ID_FILE_NEW_IMAGE
-            MENUITEM "&Webpage",                    ID_FILE_NEW_WEBPAGE
             MENUITEM "&Folder",                     ID_FILE_NEW_FOLDER
         END
         POPUP "New (&3 panes)"
@@ -324,7 +282,6 @@ BEGIN
             MENUITEM "T&able",                      ID_FILE_NEW3_TABLE
             MENUITEM "&Binary",                     ID_FILE_NEW3_HEX
             MENUITEM "&Image",                      ID_FILE_NEW3_IMAGE
-            MENUITEM "&Webpage",                    ID_FILE_NEW3_WEBPAGE
             MENUITEM "&Folder",                     ID_FILE_NEW3_FOLDER
         END
         MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
@@ -400,8 +357,6 @@ BEGIN
         MENUITEM "&WinMerge Help\tF1",          ID_HELP_CONTENTS
         MENUITEM SEPARATOR
         MENUITEM "R&elease Notes",              ID_HELP_RELEASENOTES
-        MENUITEM "&Translations",               ID_HELP_TRANSLATIONS
-        MENUITEM "C&onfiguration",              ID_HELP_GETCONFIG
         MENUITEM SEPARATOR
         MENUITEM "&GNU General Public License", ID_HELP_GNULICENSE
         MENUITEM "&About WinMerge...",          ID_APP_ABOUT
@@ -418,7 +373,6 @@ BEGIN
             MENUITEM "T&able",                      ID_FILE_NEW_TABLE
             MENUITEM "&Binary",                     ID_FILE_NEW_HEX
             MENUITEM "&Image",                      ID_FILE_NEW_IMAGE
-            MENUITEM "&Webpage",                    ID_FILE_NEW_WEBPAGE
             MENUITEM "&Folder",                     ID_FILE_NEW_FOLDER
         END
         POPUP "New (&3 panes)"
@@ -427,7 +381,6 @@ BEGIN
             MENUITEM "T&able",                      ID_FILE_NEW3_TABLE
             MENUITEM "&Binary",                     ID_FILE_NEW3_HEX
             MENUITEM "&Image",                      ID_FILE_NEW3_IMAGE
-            MENUITEM "&Webpage",                    ID_FILE_NEW3_WEBPAGE
             MENUITEM "&Folder",                     ID_FILE_NEW3_FOLDER
         END
         MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
@@ -577,8 +530,6 @@ BEGIN
         MENUITEM "&WinMerge Help\tF1",          ID_HELP_CONTENTS
         MENUITEM SEPARATOR
         MENUITEM "R&elease Notes",              ID_HELP_RELEASENOTES
-        MENUITEM "&Translations",               ID_HELP_TRANSLATIONS
-        MENUITEM "C&onfiguration",              ID_HELP_GETCONFIG
         MENUITEM SEPARATOR
         MENUITEM "&GNU General Public License", ID_HELP_GNULICENSE
         MENUITEM "&About WinMerge...",          ID_APP_ABOUT
@@ -595,7 +546,6 @@ BEGIN
             MENUITEM "T&able",                      ID_FILE_NEW_TABLE
             MENUITEM "&Binary",                     ID_FILE_NEW_HEX
             MENUITEM "&Image",                      ID_FILE_NEW_IMAGE
-            MENUITEM "&Webpage",                    ID_FILE_NEW_WEBPAGE
             MENUITEM "&Folder",                     ID_FILE_NEW_FOLDER
         END
         POPUP "New (&3 panes)"
@@ -604,7 +554,6 @@ BEGIN
             MENUITEM "T&able",                      ID_FILE_NEW3_TABLE
             MENUITEM "&Binary",                     ID_FILE_NEW3_HEX
             MENUITEM "&Image",                      ID_FILE_NEW3_IMAGE
-            MENUITEM "&Webpage",                    ID_FILE_NEW3_WEBPAGE
             MENUITEM "&Folder",                     ID_FILE_NEW3_FOLDER
         END
         MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
@@ -656,7 +605,6 @@ BEGIN
             MENUITEM "T&able",                      ID_MERGE_COMPARE_TABLE
             MENUITEM "&Binary",                     ID_MERGE_COMPARE_HEX
             MENUITEM "&Image",                      ID_MERGE_COMPARE_IMAGE
-            MENUITEM "&Webpage",                    ID_MERGE_COMPARE_WEBPAGE
             MENUITEM "A&rchive",                    ID_MERGE_COMPARE_FOLDER
             MENUITEM "< Empty >",                   ID_NO_UNPACKER
         END
@@ -913,8 +861,6 @@ BEGIN
         MENUITEM "&WinMerge Help\tF1",          ID_HELP_CONTENTS
         MENUITEM SEPARATOR
         MENUITEM "R&elease Notes",              ID_HELP_RELEASENOTES
-        MENUITEM "&Translations",               ID_HELP_TRANSLATIONS
-        MENUITEM "C&onfiguration",              ID_HELP_GETCONFIG
         MENUITEM SEPARATOR
         MENUITEM "&GNU General Public License", ID_HELP_GNULICENSE
         MENUITEM "&About WinMerge...",          ID_APP_ABOUT
@@ -943,7 +889,6 @@ BEGIN
             MENUITEM "T&able",                      ID_MERGE_COMPARE_TABLE
             MENUITEM "&Binary",                     ID_MERGE_COMPARE_HEX
             MENUITEM "&Image",                      ID_MERGE_COMPARE_IMAGE
-            MENUITEM "&Webpage",                    ID_MERGE_COMPARE_WEBPAGE
             MENUITEM "A&rchive",                    ID_MERGE_COMPARE_FOLDER
             MENUITEM "< Empty >",                   ID_NO_UNPACKER
         END
@@ -1169,7 +1114,6 @@ BEGIN
         MENUITEM "T&able",                      ID_FILE_NEW_TABLE
         MENUITEM "&Binary",                     ID_FILE_NEW_HEX
         MENUITEM "&Image",                      ID_FILE_NEW_IMAGE
-        MENUITEM "&Webpage",                    ID_FILE_NEW_WEBPAGE
         MENUITEM "&Folder",                     ID_FILE_NEW_FOLDER
     END
 END
@@ -1182,7 +1126,6 @@ BEGIN
         MENUITEM "T&able",                      ID_MERGE_COMPARE_TABLE
         MENUITEM "&Binary",                     ID_MERGE_COMPARE_HEX
         MENUITEM "&Image",                      ID_MERGE_COMPARE_IMAGE
-        MENUITEM "&Webpage",                    ID_MERGE_COMPARE_WEBPAGE
         MENUITEM "A&rchive",                    ID_MERGE_COMPARE_FOLDER
     END
 END
@@ -1251,31 +1194,6 @@ BEGIN
     END
 END
 
-IDR_POPUP_WEBPAGE_COMPARE MENU
-BEGIN
-    POPUP "_POPUP_"
-    BEGIN
-        MENUITEM "&Screenshots",                ID_WEB_COMPARE_SCREENSHOTS
-        MENUITEM "&Full Size Screenshots",      ID_WEB_COMPARE_FULLSIZE_SCREENSHOTS
-        MENUITEM "&HTMLs",                      ID_WEB_COMPARE_HTMLS
-        MENUITEM "&Texts",                      ID_WEB_COMPARE_TEXTS
-        MENUITEM "&Resource Trees",             ID_WEB_COMPARE_RESOURCETREES
-    END
-END
-
-IDR_POPUP_WEBPAGE_SYNC_EVENTS MENU
-BEGIN
-    POPUP "_POPUP_"
-    BEGIN
-        MENUITEM "&Enabled",                    ID_WEB_SYNC_ENABLED
-        MENUITEM SEPARATOR
-        MENUITEM "&Scroll",                     ID_WEB_SYNC_SCROLL
-        MENUITEM "&Click",                      ID_WEB_SYNC_CLICK
-        MENUITEM "&Input",                      ID_WEB_SYNC_INPUT
-        MENUITEM "&Go Back/Forward",            ID_WEB_SYNC_GOBACKFORWARD
-    END
-END
-
 IDR_POPUP_PLUGIN_PIPELINE_MENU MENU
 BEGIN
     POPUP "_POPUP_"
@@ -1299,14 +1217,8 @@ BEGIN
     BEGIN
         MENUITEM "${SRC_FILE} - Source File",   ID_PLUGIN_COMMAND_LINE_SRC_FILE
         MENUITEM "${SRC_FOLDER} - Source Folder", ID_PLUGIN_COMMAND_LINE_SRC_FOLDER
-        MENUITEM "${SRC_URL} - Source URL",     ID_PLUGIN_COMMAND_LINE_SRC_URL
-        MENUITEM "${SRC_URL_PROTOCOL} - Source URL Protocol", ID_PLUGIN_COMMAND_LINE_SRC_URL_PROTOCOL
-        MENUITEM "${SRC_URL_SUFFIX} - Source URL Suffix", ID_PLUGIN_COMMAND_LINE_SRC_URL_SUFFIX
         MENUITEM "${DST_FILE} - Destination File", ID_PLUGIN_COMMAND_LINE_DST_FILE
         MENUITEM "${DST_FOLDER} - Destination Folder", ID_PLUGIN_COMMAND_LINE_DST_FOLDER
-        MENUITEM "${DST_URL} - Destination URL", ID_PLUGIN_COMMAND_LINE_DST_URL
-        MENUITEM "${DST_URL_PROTOCOL} - Destination URL Protocol", ID_PLUGIN_COMMAND_LINE_DST_URL_PROTOCOL
-        MENUITEM "${DST_URL_SUFFIX} - Destination URL Suffix", ID_PLUGIN_COMMAND_LINE_DST_URL_SUFFIX
         MENUITEM "${WINMERGE_HOME} - WinMerge Home Directory", ID_PLUGIN_COMMAND_LINE_WINMERGE_HOME
         MENUITEM "${SCRIPT_FILE} - Script File", ID_PLUGIN_COMMAND_LINE_SCRIPT_FILE
         MENUITEM "${*} - All Arguments",        ID_PLUGIN_COMMAND_LINE_ARGALL
@@ -1944,7 +1856,6 @@ CAPTION "About WinMerge"
 FONT 8, FONTNAME, 0, 0, 0x1
 BEGIN
     LTEXT           "",IDC_GNU_ASCII,7,50,200,120
-    CONTROL         "Visit the WinMerge Homepage!",IDC_WWW,"SysLink",LWS_IGNORERETURN | 0x1,120,222,167,10
     LTEXT           "[VERSION COPYRIGHT GOES HERE]",IDC_COMPANY,7,174,350,42
     DEFPUSHBUTTON   "OK",IDOK,295,220,65,14
     PUSHBUTTON      "Contributors",IDC_OPEN_CONTRIBUTORS,7,220,65,14
@@ -3049,22 +2960,6 @@ BEGIN
     PUSHBUTTON      "Defaults",IDC_COMPARE_DEFAULTS,230,280,88,14
 END
 
-IDD_PROPPAGE_COMPARE_WEBPAGE DIALOGEX 0, 0, 325, 254
-STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
-CAPTION "Webpage"
-FONT 8, FONTNAME, 0, 0, 0x1
-BEGIN
-    LTEXT           "URL pattern to &include (Regular expression):",IDC_STATIC,7,6,309,10
-    EDITTEXT        IDC_COMPAREWEBPAGE_URLPATTERNTOINCLUDE,7,18,310,14,ES_AUTOHSCROLL
-    LTEXT           "URL pattern to &exclude (Regular expression):",IDC_STATIC,7,32,309,10
-    EDITTEXT        IDC_COMPAREWEBPAGE_URLPATTERNTOEXCLUDE,7,44,310,14,ES_AUTOHSCROLL
-    LTEXT           "&User data folder location:",IDC_STATIC,7,60,309,10
-    COMBOBOX        IDC_COMPAREWEBPAGE_USERDATAFOLDER_TYPE,7,72,310,10,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "&Separate user data folders for each pane",IDC_COMPAREWEBPAGE_USERDATAFOLDER_PERPANE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,88,310,10
-    PUSHBUTTON      "Defaults",IDC_COMPARE_DEFAULTS,230,280,88,14
-END
-
 IDD_ENCODINGERROR DIALOGEX 0, 0, 450, 55
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
 FONT 8, FONTNAME, 0, 0, 0x1
@@ -3857,19 +3752,6 @@ BEGIN
     100, 0, 0, 0
 END
 
-IDD_PROPPAGE_COMPARE_WEBPAGE AFX_DIALOG_LAYOUT
-BEGIN
-    0,
-    0, 0, 100, 0,
-    0, 0, 100, 0,
-    0, 0, 100, 0,
-    0, 0, 100, 0,
-    0, 0, 100, 0,
-    0, 0, 100, 0,
-    0, 0, 100, 0,
-    100, 0, 0, 0
-END
-
 IDD_PROPPAGE_EDITOR AFX_DIALOG_LAYOUT
 BEGIN
     0,
@@ -4237,7 +4119,6 @@ BEGIN
     IDS_OPTIONSPG_IMAGECOMPARE "Image"
     IDS_OPTIONSPG_BINARYCOMPARE NC_("Options dialog|Categories", "Binary")
     IDS_OPTIONSPG_TABLECOMPARE "Table"
-    IDS_OPTIONSPG_WEBPAGECOMPARE "Webpage"
 END
 
 // WINMERGE CUSTOM STRINGS
@@ -5137,11 +5018,6 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_WEBPAGE_MENU        "We&bpage"
-END
-
-STRINGTABLE
-BEGIN
     IDS_VIEW_WRAP_TEXT      "W&rap Text"
 END
 
@@ -5237,9 +5113,9 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_USERDATAFOLDER_APPDATA "AppData (Roaming) folder"
+    IDS_USERDATAFOLDER_APPDATA "AppData\\Data folder"
     IDS_USERDATAFOLDER_INSTALL "Install folder"
-    IDS_USERDATAFOLDER_DOCUMENTS "Documents folder"
+    IDS_USERDATAFOLDER_DOCUMENTS "AppData\\Data folder"
 END
 
 STRINGTABLE
@@ -5274,13 +5150,12 @@ BEGIN
     IDS_PLUGIN_PREDIFF_ERROR
                             "Error prediffing '%1' with '%2'. Prediffing disabled."
     IDS_PLUGIN_CIRCULAR_REFERENCE "Circular reference in plugin pipeline: %1"
-    IDS_PLUGIN_TYPE1        "URL Handler"
-    IDS_PLUGIN_TYPE2        "File Unpacker"
-    IDS_PLUGIN_TYPE3        "File or Folder Unpacker"
-    IDS_PLUGIN_TYPE4        "Prediffer"
-    IDS_PLUGIN_TYPE5        "Alias for Unpacker"
-    IDS_PLUGIN_TYPE6        "Alias for Prediffer"
-    IDS_PLUGIN_TYPE7        "Alias for Editor script"
+    IDS_PLUGIN_TYPE1        "File Unpacker"
+    IDS_PLUGIN_TYPE2        "File or Folder Unpacker"
+    IDS_PLUGIN_TYPE3        "Prediffer"
+    IDS_PLUGIN_TYPE4        "Alias for Unpacker"
+    IDS_PLUGIN_TYPE5        "Alias for Prediffer"
+    IDS_PLUGIN_TYPE6        "Alias for Editor script"
     IDS_PLUGIN_ALIAS_DESC   "Alias for plugin pipeline '%1'"
     IDS_PLUGIN_NEW_DESC     "New plugin description"
     IDS_PLUGIN_TARGETS_ALL  "All"
@@ -5316,16 +5191,10 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_WEBVIEW2_RUNTIME_NOT_INSTALLED "WebView2 runtime not installed. Download it?"
-END
-
-STRINGTABLE
-BEGIN
     IDS_JUMPLIST_NEW_TEXT_COMPARE "New Text Compare"
     IDS_JUMPLIST_NEW_TABLE_COMPARE "New Table Compare"
     IDS_JUMPLIST_NEW_BINARY_COMPARE "New Binary Compare"
     IDS_JUMPLIST_NEW_IMAGE_COMPARE "New Image Compare"
-    IDS_JUMPLIST_NEW_WEBPAGE_COMPARE "New Webpage Compare"
     IDS_JUMPLIST_NEW_FOLDER_COMPARE "New Folder Compare"
     IDS_JUMPLIST_CLIPBOARD_COMPARE "Clipboard Compare"
 END
@@ -5340,12 +5209,6 @@ BEGIN
     IDS_PREVIEWBAR_ZOOMIN   "Zoom &In"
     IDS_PREVIEWBAR_ZOOMOUT  "Zoom &Out"
     IDS_PREVIEWBAR_CLOSE    "&Close"
-END
-
-STRINGTABLE
-BEGIN
-    IDS_WEBPAGE_COMPARING   "Comparing..."
-    IDS_WEBPAGE_ZOOM        "Zoom:"
 END
 
 STRINGTABLE

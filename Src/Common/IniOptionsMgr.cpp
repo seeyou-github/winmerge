@@ -45,6 +45,7 @@ public:
 
 	~IOHandler()
 	{
+		WaitForQueueFlush();
 		for (;;)
 		{
 			::PostThreadMessage(m_dwThreadId, WM_QUIT, 0, 0);
@@ -68,13 +69,7 @@ public:
 
 	void WriteAsync(const String& name, const varprop::VariantValue& value)
 	{
-		auto* pParam = new AsyncWriterThreadParams(name, value);
-		InterlockedIncrement(&m_dwQueueCount);
-		if (!::PostThreadMessage(m_dwThreadId, WM_USER, (WPARAM)pParam, 0))
-		{
-			delete pParam;
-			InterlockedDecrement(&m_dwQueueCount);
-		}
+		SaveValueToFile(name, value);
 	}
 
 	void WriteKeyValue(const String& key, const String& value, const String& filename)

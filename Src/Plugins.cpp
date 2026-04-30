@@ -29,7 +29,6 @@
 #include "FileFilterMgr.h"
 #include "lwdisp.h"
 #include "Exceptions.h"
-#include "RegKey.h"
 #include "paths.h"
 #include "Environment.h"
 #include "FileFilter.h"
@@ -56,7 +55,6 @@ const wchar_t *TransformationCategories[] =
 	L"BUFFER_PACK_UNPACK",
 	L"FILE_PACK_UNPACK",
 	L"FILE_FOLDER_PACK_UNPACK",
-	L"URL_PACK_UNPACK",
 	nullptr,		// last empty : necessary
 };
 
@@ -86,16 +84,7 @@ namespace plugin
  */
 bool IsWindowsScriptThere()
 {
-	CRegKeyEx keyFile;
-	if (!keyFile.QueryRegMachine(_T("SOFTWARE\\Classes\\scriptletfile\\AutoRegister")))
-		return false;
-
-	String filename = keyFile.ReadString(_T(""), _T(""));
-	keyFile.Close();
-	if (filename.empty())
-		return false;
-
-	return (paths::DoesPathExist(filename) == paths::IS_EXISTING_FILE);
+	return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -500,7 +489,7 @@ int PluginInfo::MakeInfo(const String& scriptletFilepath, const String& name, ID
 		bFound &= SearchScriptForMethodName(L"UnpackFile");
 		bFound &= SearchScriptForMethodName(L"PackFile");
 	}
-	else if (m_event == _T("FILE_FOLDER_PACK_UNPACK") || m_event == _T("URL_PACK_UNPACK"))
+	else if (m_event == _T("FILE_FOLDER_PACK_UNPACK"))
 	{
 		bFound &= SearchScriptForMethodName(L"IsFolder");
 		bFound &= SearchScriptForMethodName(L"UnpackFile");

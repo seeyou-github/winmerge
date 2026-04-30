@@ -1,10 +1,21 @@
 cd /d "%~dp0"
 
 call SetVersion.cmd
-cscript /nologo ExpandEnvironmenStrings.js Version.in > Version.h
+cscript /nologo ExpandEnvironmenStrings.js Version.in > Version.h.tmp
+if errorlevel 1 (
+  echo Failed to generate Version.h.
+  del Version.h.tmp > NUL 2> NUL
+  exit /b 1
+)
+move /Y Version.h.tmp Version.h > NUL
 
 setlocal
-for /f "usebackq tokens=*" %%i in (`"%programfiles(x86)%\microsoft visual studio\installer\vswhere.exe" -version [17.0^,18.0^) -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath`) do (
+set "VSWHERE=%programfiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe"
+if not exist "%VSWHERE%" (
+  echo Visual Studio Installer vswhere.exe was not found.
+  exit /b 1
+)
+for /f "tokens=*" %%i in ('call "%VSWHERE%" -version [17.0^,18.0^) -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath') do (
   set InstallDir=%%i
 )
 if exist "%InstallDir%\Common7\Tools\vsdevcmd.bat" (

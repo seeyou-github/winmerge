@@ -19,7 +19,6 @@
 #include "Environment.h"
 #include "OptionsMgr.h"
 #include "OptionsInit.h"
-#include "RegOptionsMgr.h"
 #include "IniOptionsMgr.h"
 #include "OpenDoc.h"
 #include "OpenFrm.h"
@@ -64,20 +63,20 @@
 #include "OptionsProject.h"
 #include "OptionsFont.h"
 #include "MergeAppCOMClass.h"
-#include "RegKey.h"
 #include "Win_VersionHelper.h"
 #include "BCMenu.h"
 #include "MouseHook.h"
 #include "SysColorHook.h"
 #include "Logger.h"
 #include "ColorSchemes.h"
-#include "CrashLogger.h"
 #include "FileSaveHelper.h"
 #include <../src/mfc/afximpl.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+static String s_profileIniFilePath;
 
 /////////////////////////////////////////////////////////////////////////////
 // CMergeApp
@@ -134,7 +133,7 @@ CMergeApp::CMergeApp() :
 /**
  * @brief Chose which options manager should be initialized.
  * @return IniOptionsMgr if initial config file exists,
- *   CRegOptionsMgr otherwise.
+ *   local AppData\Config\winmerge.ini otherwise.
  */
 static COptionsMgr *CreateOptionManager(const MergeCmdLineInfo& cmdInfo)
 {
@@ -143,12 +142,21 @@ static COptionsMgr *CreateOptionManager(const MergeCmdLineInfo& cmdInfo)
 	{
 		iniFilePath = paths::GetLongPath(iniFilePath);
 		if (paths::CreateIfNeeded(paths::GetParentPath(iniFilePath)))
+		{
+			s_profileIniFilePath = iniFilePath;
+			HANDLE hFile = CreateFile(iniFilePath.c_str(), GENERIC_WRITE, FILE_SHARE_READ, nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+			if (hFile != INVALID_HANDLE_VALUE)
+				CloseHandle(hFile);
 			return new CIniOptionsMgr(iniFilePath);
+		}
 	}
-	iniFilePath = paths::ConcatPath(env::GetProgPath(), _T("winmerge.ini"));
-	if (paths::DoesPathExist(iniFilePath) == paths::IS_EXISTING_FILE)
-		return new CIniOptionsMgr(iniFilePath);
-	return new CRegOptionsMgr(_T("Thingamahoochie\\WinMerge\\"));
+	iniFilePath = paths::ConcatPath(env::GetConfigPath(), _T("winmerge.ini"));
+	paths::CreateIfNeeded(paths::GetParentPath(iniFilePath));
+	s_profileIniFilePath = iniFilePath;
+	HANDLE hFile = CreateFile(iniFilePath.c_str(), GENERIC_WRITE, FILE_SHARE_READ, nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+	if (hFile != INVALID_HANDLE_VALUE)
+		CloseHandle(hFile);
+	return new CIniOptionsMgr(iniFilePath);
 }
 
 static HANDLE CreateMutexHandle()
@@ -212,8 +220,6 @@ std::vector<JumpList::Item> CMergeApp::CreateUserTasks(MergeCmdLineInfo::usertas
 		items.emplace_back(_(""), _T("/new /t binary"), _("New Binary Compare"), _T(""), _T(""), 0);
 	if (flags & MergeCmdLineInfo::NEW_IMAGE_COMPARE)
 		items.emplace_back(_(""), _T("/new /t image"), _("New Image Compare"), _T(""), _T(""), 0);
-	if (flags & MergeCmdLineInfo::NEW_WEBPAGE_COMPARE)
-		items.emplace_back(_(""), _T("/new /t webpage"), _("New Webpage Compare"), _T(""), _T(""), 0);
 	if (flags & MergeCmdLineInfo::NEW_FOLDER_COMPARE)
 		items.emplace_back(_(""), _T("/new /t folder"), _("New Folder Compare"), _T(""), _T(""), 0);
 	if (flags & MergeCmdLineInfo::CLIPBOARD_COMPARE)
@@ -294,9 +300,6 @@ BOOL CMergeApp::InitInstance()
 	COleMessageFilter* pOldFilter = AfxOleGetMessageFilter();
 	pOldFilter->Revoke();
 
-	// Load registry keys from WinMerge.reg if existing WinMerge.reg
-	env::LoadRegistryFromFile(paths::ConcatPath(env::GetProgPath(), _T("WinMerge.reg")));
-
 	// Parse command-line arguments.
 #ifdef TEST_WINMERGE
 	MergeCmdLineInfo cmdInfo(_T(""));
@@ -305,10 +308,7 @@ BOOL CMergeApp::InitInstance()
 #endif
 	m_pOptions.reset(CreateOptionManager(cmdInfo));
 	if (cmdInfo.m_bNoPrefs)
-		m_pOptions->SetSerializing(false); // Turn off serializing to registry.
-
-	if (dynamic_cast<CRegOptionsMgr*>(m_pOptions.get()) != nullptr)
-		Options::CopyHKLMValues();
+		m_pOptions->SetSerializing(false);
 
 	Options::Init(m_pOptions.get()); // Implementation in OptionsInit.cpp
 	ApplyCommandLineConfigOptions(cmdInfo);
@@ -324,10 +324,6 @@ BOOL CMergeApp::InitInstance()
 	// If paths were given to commandline we consider this being an invoke from
 	// commandline (from other application, shellextension etc).
 	bool bCommandLineInvoke = cmdInfo.m_Files.GetSize() > 0;
-
-	// WinMerge registry settings are stored under HKEY_CURRENT_USER/Software/Thingamahoochie
-	// This is the name of the company of the original author (Dean Grimm)
-	SetRegistryKey(_T("Thingamahoochie"));
 
 	int nSingleInstance = cmdInfo.m_nSingleInstance.has_value() ?
 		*cmdInfo.m_nSingleInstance : GetOptionsMgr()->GetInt(OPT_SINGLE_INSTANCE);
@@ -379,16 +375,6 @@ BOOL CMergeApp::InitInstance()
 	SysColorHook::Init();
 	charsets_init();
 	UpdateCodepageModule();
-
-	// Install crash logger
-#ifndef _M_ARM
-	CrashLogger::Install();
-#else
-// NOTE:
-// CrashLogger is disabled on ARM32.
-// Stack walking via DbgHelp/StackWalk64 is unreliable on ARM32
-// and may cause additional failures during exception handling.
-#endif
 
 	FileTransform::AutoUnpacking = GetOptionsMgr()->GetBool(OPT_PLUGINS_UNPACKER_MODE);
 	FileTransform::AutoPrediffing = GetOptionsMgr()->GetBool(OPT_PLUGINS_PREDIFFER_MODE);
@@ -585,20 +571,13 @@ static void OpenContributersFile(int&)
 	CMergeApp::OpenFileToExternalEditor(paths::ConcatPath(env::GetProgPath(), ContributorsPath));
 }
 
-static void OpenUrl(int&)
-{
-	shell::Open(WinMergeURL);
-}
-
 // App command to run the dialog
 void CMergeApp::OnAppAbout()
 {
 	CAboutDlg aboutDlg;
 	aboutDlg.m_onclick_contributers += Poco::delegate(OpenContributersFile);
-	aboutDlg.m_onclick_url += Poco::delegate(OpenUrl);
 	aboutDlg.DoModal();
 	aboutDlg.m_onclick_contributers.clear();
-	aboutDlg.m_onclick_url.clear();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -612,17 +591,9 @@ void CMergeApp::OnAppAbout()
  */
 int CMergeApp::ExitInstance()
 {
-	// Disable crash logging before shutdown (to avoid logging shutdown crashes)
-#ifndef _M_ARM
-	CrashLogger::Disable();
-#endif
-
 	CMouseHook::UnhookMouseHook();
 
 	charsets_cleanup();
-
-	//  Save registry keys if existing WinMerge.reg
-	env::SaveRegistryToFile(paths::ConcatPath(env::GetProgPath(), _T("WinMerge.reg")), RegDir);
 
 	// Remove tempfolder
 	const String temp = env::GetTemporaryPath();
@@ -737,14 +708,6 @@ BOOL CMergeApp::OnIdle(LONG lCount)
 	if (CWinApp::OnIdle(lCount))
 		return TRUE;
 
-	// Check for previous crash (only once, on first idle)
-	static bool s_bCrashChecked = false;
-	if (!s_bCrashChecked && CrashLogger::HasPreviousCrash())
-	{
-		s_bCrashChecked = true;
-		CrashLogger::CheckAndReportPreviousCrash();
-	}
-
 	// If anyone has requested notification when next idle occurs, send it
 	if (m_bNeedIdleTimer)
 	{
@@ -754,11 +717,6 @@ BOOL CMergeApp::OnIdle(LONG lCount)
 
 	if (m_bNonInteractive && IsReallyIdle())
 		m_pMainWnd->PostMessage(WM_CLOSE, 0, 0);
-
-	if (typeid(*GetOptionsMgr()) == typeid(CRegOptionsMgr))
-	{
-		static_cast<CRegOptionsMgr*>(GetOptionsMgr())->CloseKeys();
-	}
 
 	static int count = 0;
 	if (++count > 1)
@@ -842,9 +800,6 @@ bool CMergeApp::ShowCompareAsMenu(MergeCmdLineInfo& cmdInfo)
 		break;
 	case ID_MERGE_COMPARE_IMAGE:
 		cmdInfo.m_nWindowType = MergeCmdLineInfo::IMAGE;
-		break;
-	case ID_MERGE_COMPARE_WEBPAGE:
-		cmdInfo.m_nWindowType = MergeCmdLineInfo::WEBPAGE;
 		break;
 	default:
 		if (nID == ID_OPEN_WITH_UNPACKER)
@@ -930,9 +885,6 @@ bool CMergeApp::ParseArgsAndDoOpen(MergeCmdLineInfo& cmdInfo, CMainFrame* pMainF
 	if (cmdInfo.m_dwUserTasksFlags.has_value())
 	{
 		JumpList::AddUserTasks(CreateUserTasks(*cmdInfo.m_dwUserTasksFlags));
-		CRegKeyEx reg;
-		if (ERROR_SUCCESS == reg.Open(HKEY_CURRENT_USER, RegDir))
-			reg.WriteDword(_T("UserTasksFlags"), *cmdInfo.m_dwUserTasksFlags);
 	}
 
 	// Set the global file filter.
@@ -1199,8 +1151,6 @@ void CMergeApp::ShowHelp(const tchar_t* helpLocation /*= nullptr*/)
 	{
 		if (paths::DoesPathExist(sPath) == paths::IS_EXISTING_FILE)
 			::HtmlHelp(nullptr, sPath.c_str(), HH_DISPLAY_TOC, NULL);
-		else
-			shell::Open(DocsURL);
 	}
 	else
 	{
@@ -1550,10 +1500,7 @@ void CMergeApp::AddToRecentProjectsMRU(const tchar_t* sPathName)
 void CMergeApp::SetupTempPath()
 {
 	String instTemp = env::GetPerInstanceString(TempFolderPrefix);
-	if (GetOptionsMgr()->GetBool(OPT_USE_SYSTEM_TEMP_PATH))
-		env::SetTemporaryPath(paths::ConcatPath(env::GetSystemTempPath(), instTemp));
-	else
-		env::SetTemporaryPath(paths::ConcatPath(GetOptionsMgr()->GetString(OPT_CUSTOM_TEMP_PATH), instTemp));
+	env::SetTemporaryPath(paths::ConcatPath(env::GetSystemTempPath(), instTemp));
 }
 
 /**
@@ -1614,58 +1561,13 @@ void CMergeApp::OnUpdateMergingStatus(CCmdUI *pCmdUI)
 	pCmdUI->Enable(GetMergingMode());
 }
 
-UINT CMergeApp::GetProfileInt(const tchar_t* lpszSection, const tchar_t* lpszEntry, int nDefault)
-{
-	COptionsMgr *pOptions = GetOptionsMgr();
-	String name = strutils::format(_T("%s/%s"), lpszSection, lpszEntry);
-	if (!pOptions->Get(name).IsInt())
-		pOptions->InitOption(name, nDefault);
-	return pOptions->GetInt(name);
-}
-
-BOOL CMergeApp::WriteProfileInt(const tchar_t* lpszSection, const tchar_t* lpszEntry, int nValue)
-{
-	COptionsMgr *pOptions = GetOptionsMgr();
-	String name = strutils::format(_T("%s/%s"), lpszSection, lpszEntry);
-	if (!pOptions->Get(name).IsInt())
-		pOptions->InitOption(name, nValue);
-	return pOptions->SaveOption(name, nValue) == COption::OPT_OK;
-}
-
-CString CMergeApp::GetProfileString(const tchar_t* lpszSection, const tchar_t* lpszEntry, const tchar_t* lpszDefault)
-{
-	COptionsMgr *pOptions = GetOptionsMgr();
-	String name = strutils::format(_T("%s/%s"), lpszSection, lpszEntry);
-	if (!pOptions->Get(name).IsString())
-		pOptions->InitOption(name, lpszDefault ? lpszDefault : _T(""));
-	return pOptions->GetString(name).c_str();
-}
-
-BOOL CMergeApp::WriteProfileString(const tchar_t* lpszSection, const tchar_t* lpszEntry, const tchar_t* lpszValue)
-{
-	COptionsMgr *pOptions = GetOptionsMgr();
-	if (lpszEntry != nullptr)
-	{
-		String name = strutils::format(_T("%s/%s"), lpszSection, lpszEntry);
-		if (!pOptions->Get(name).IsString())
-			pOptions->InitOption(name, lpszValue ? lpszValue : _T(""));
-		return pOptions->SaveOption(name, lpszValue ? lpszValue : _T("")) == COption::OPT_OK;
-	}
-	else
-	{
-		String name = strutils::format(_T("%s/"), lpszSection);
-		pOptions->RemoveOption(name);
-	}
-	return TRUE;
-}
-
 void CMergeApp::AddZombieThread(CWinThread* pThread)
-{ 
+{
 	m_threads.push_back(pThread);
 }
 
 bool CMergeApp::WaitZombieThreads()
-{ 
+{
 	bool terminated = true;
 	for (auto* pThread : m_threads)
 	{
@@ -1675,6 +1577,47 @@ bool CMergeApp::WaitZombieThreads()
 		delete pThread;
 	}
 	return terminated;
+}
+
+UINT CMergeApp::GetProfileInt(const tchar_t* lpszSection, const tchar_t* lpszEntry, int nDefault)
+{
+	if (s_profileIniFilePath.empty())
+		s_profileIniFilePath = paths::ConcatPath(env::GetConfigPath(), _T("winmerge.ini"));
+	return ::GetPrivateProfileInt(lpszSection, lpszEntry, nDefault, s_profileIniFilePath.c_str());
+}
+
+BOOL CMergeApp::WriteProfileInt(const tchar_t* lpszSection, const tchar_t* lpszEntry, int nValue)
+{
+	if (s_profileIniFilePath.empty())
+		s_profileIniFilePath = paths::ConcatPath(env::GetConfigPath(), _T("winmerge.ini"));
+	paths::CreateIfNeeded(paths::GetParentPath(s_profileIniFilePath));
+	tchar_t value[32] = { 0 };
+	_sntprintf_s(value, _TRUNCATE, _T("%d"), nValue);
+	return ::WritePrivateProfileString(lpszSection, lpszEntry, value, s_profileIniFilePath.c_str());
+}
+
+CString CMergeApp::GetProfileString(const tchar_t* lpszSection, const tchar_t* lpszEntry, const tchar_t* lpszDefault)
+{
+	if (s_profileIniFilePath.empty())
+		s_profileIniFilePath = paths::ConcatPath(env::GetConfigPath(), _T("winmerge.ini"));
+	std::vector<tchar_t> buffer(4096);
+	DWORD length = ::GetPrivateProfileString(lpszSection, lpszEntry, lpszDefault ? lpszDefault : _T(""),
+		buffer.data(), static_cast<DWORD>(buffer.size()), s_profileIniFilePath.c_str());
+	while (length == buffer.size() - 1)
+	{
+		buffer.resize(buffer.size() * 2);
+		length = ::GetPrivateProfileString(lpszSection, lpszEntry, lpszDefault ? lpszDefault : _T(""),
+			buffer.data(), static_cast<DWORD>(buffer.size()), s_profileIniFilePath.c_str());
+	}
+	return buffer.data();
+}
+
+BOOL CMergeApp::WriteProfileString(const tchar_t* lpszSection, const tchar_t* lpszEntry, const tchar_t* lpszValue)
+{
+	if (s_profileIniFilePath.empty())
+		s_profileIniFilePath = paths::ConcatPath(env::GetConfigPath(), _T("winmerge.ini"));
+	paths::CreateIfNeeded(paths::GetParentPath(s_profileIniFilePath));
+	return ::WritePrivateProfileString(lpszSection, lpszEntry, lpszValue, s_profileIniFilePath.c_str());
 }
 
 void CMergeApp::ReloadCustomSysColors()

@@ -737,17 +737,7 @@ String GetPathOnly(const String& fullpath)
 
 bool IsURL(const String& abspath)
 {
-	for (size_t i = 0; i < abspath.length(); ++i)
-	{
-		const auto c = abspath[i];
-		if (c == '\\' || c == '/')
-		{
-			// If there is a \ or / before the : character, consider it not a URL.
-			return false;
-		}
-		else if (c == ':')
-			return (i != 1);
-	}
+	UNREFERENCED_PARAMETER(abspath);
 	return false;
 }
 

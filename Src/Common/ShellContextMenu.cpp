@@ -151,35 +151,10 @@ bool CShellContextMenu::QueryShellContextMenu()
 		return false;
 	}
 
-	// The following was created with reference to https://github.com/stefankueng/grepWin/blob/main/src/ShellContextMenu.cpp.
-	HKEY ahkeys[16]{};
-	int nKeys = 0;
-	const std::wstring& path = m_files.front();
-	nKeys += RegOpenKey(HKEY_CLASSES_ROOT, L"*", &ahkeys[nKeys]) == ERROR_SUCCESS ? 1 : 0;
-	nKeys += RegOpenKey(HKEY_CLASSES_ROOT, L"AllFileSystemObjects", &ahkeys[nKeys]) == ERROR_SUCCESS ? 1 : 0;
-	if (PathIsDirectory(path.c_str()))
-	{
-		nKeys += RegOpenKey(HKEY_CLASSES_ROOT, L"Folder", &ahkeys[nKeys]) == ERROR_SUCCESS ? 1 : 0;
-		nKeys += RegOpenKey(HKEY_CLASSES_ROOT, L"Directory", &ahkeys[nKeys]) == ERROR_SUCCESS ? 1 : 0;
-	}
-	HKEY hkey;
-	const wchar_t* ext = PathFindExtension(path.c_str());
-	if (ext && *ext == '.' && RegOpenKey(HKEY_CLASSES_ROOT, ext, &hkey) == ERROR_SUCCESS)
-	{
-		wchar_t buf[MAX_PATH] = { 0 };
-		DWORD dwSize = MAX_PATH;
-		if (RegQueryValueEx(hkey, L"", nullptr, nullptr, reinterpret_cast<LPBYTE>(buf), &dwSize) == ERROR_SUCCESS)
-			nKeys += RegOpenKey(HKEY_CLASSES_ROOT, buf, &ahkeys[nKeys]) == ERROR_SUCCESS ? 1 : 0;
-		RegCloseKey(hkey);
-	}
-
 	IContextMenuPtr pCMenu1;
 	HRESULT hr = CDefFolderMenu_Create2(nullptr, nullptr,
 		static_cast<unsigned>(pidls.Size()),
-		pidls.GetList(), pDesktop, dfmCallback, nKeys, ahkeys, &pCMenu1);
-
-	for (int i = 0; i < nKeys; ++i)
-		RegCloseKey(ahkeys[i]);
+		pidls.GetList(), pDesktop, dfmCallback, 0, nullptr, &pCMenu1);
 
 	if (FAILED(hr))
 	{

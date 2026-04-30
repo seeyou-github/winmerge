@@ -105,6 +105,7 @@ public:
 	virtual BOOL WriteProfileInt(const tchar_t* lpszSection, const tchar_t* lpszEntry, int nValue) override;
 	virtual CString GetProfileString(const tchar_t* lpszSection, const tchar_t* lpszEntry, const tchar_t* lpszDefault = NULL) override;
 	virtual BOOL WriteProfileString(const tchar_t* lpszSection, const tchar_t* lpszEntry, const tchar_t* lpszValue) override;
+
 	virtual HINSTANCE LoadAppLangResourceDLL() override { return nullptr; }; // Disable loading lang resource dll
 	int DoMessageBox(const tchar_t* lpszPrompt, UINT nType, UINT nIDPrompt, const tchar_t* lpszRegistryKey = nullptr);
 

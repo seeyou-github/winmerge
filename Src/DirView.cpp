@@ -4484,7 +4484,6 @@ void CDirView::OnMergeCompareNonHorizontally()
  * - Compare As > Table
  * - Compare As > Binary
  * - Compare As > Image
- * - Compare As > Webpage
  *
  * @param [in] nID Menu ID of the selected item
  */
@@ -4522,7 +4521,6 @@ void CDirView::OnMergeCompareAs(UINT nID)
  * - Compare As > Table
  * - Compare As > Binary
  * - Compare As > Image
- * - Compare As > Webpage
  * 
  * @param [in] pCmdUI UI component to update.
  */

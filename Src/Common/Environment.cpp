@@ -8,10 +8,6 @@
 #define POCO_NO_UNWINDOWS 1
 #include "Environment.h"
 #include <windows.h>
-#pragma warning (push)			// prevent "warning C4091: 'typedef ': ignored on left of 'tagGPFIDL_FLAGS' when no variable is declared"
-#pragma warning (disable:4091)	// VC bug when using XP enabled toolsets.
-#include <shlobj.h>
-#pragma warning (pop)
 #include <sstream>
 #include <Poco/Path.h>
 #include <Poco/Process.h>
@@ -30,6 +26,8 @@ namespace env
  */
 static String strTempPath;
 static String strProgPath;
+static String strConfigPath;
+static String strDataPath;
 
 void SetTemporaryPath(const String& path)
 {
@@ -111,6 +109,15 @@ String GetProgPath()
 	return strProgPath;
 }
 
+static String GetPortableAppDataChildPath(const tchar_t* child)
+{
+	String path = paths::ConcatPath(GetProgPath(), _T("AppData"));
+	path = paths::ConcatPath(path, child);
+	path = paths::GetLongPath(path);
+	paths::CreateIfNeeded(path);
+	return paths::AddTrailingSlash(path);
+}
+
 /**
  * @brief Get Windows directory.
  * @return Windows directory.
@@ -124,29 +131,37 @@ String GetWindowsDirectory()
 }
 
 /**
- * @brief Return User's My Documents Folder.
- * This function returns full path to User's My Documents -folder.
- * @return Full path to My Documents -folder.
+ * @brief Return local data folder.
+ * This build keeps persistent application data next to the executable.
+ * @return Full path to local data folder.
  */
 String GetMyDocuments()
 {
-	tchar_t path[MAX_PATH];
-	path[0] = _T('\0');
-	SHGetFolderPath(nullptr, CSIDL_PERSONAL, nullptr, 0, path);
-	return path;
+	return GetDataPath();
 }
 
 /**
- * @brief Return User's Application Data Folder.
- * This function returns full path to User's Application Data -folder.
- * @return Full path to Application Data -folder.
+ * @brief Return local application data folder.
+ * This build does not use per-user AppData/Roaming storage.
+ * @return Full path to local data folder.
  */
 String GetAppDataPath()
 {
-	tchar_t path[MAX_PATH];
-	path[0] = _T('\0');
-	SHGetFolderPath(nullptr, CSIDL_APPDATA, nullptr, 0, path);
-	return path;
+	return GetDataPath();
+}
+
+String GetConfigPath()
+{
+	if (strConfigPath.empty())
+		strConfigPath = GetPortableAppDataChildPath(_T("Config"));
+	return strConfigPath;
+}
+
+String GetDataPath()
+{
+	if (strDataPath.empty())
+		strDataPath = GetPortableAppDataChildPath(_T("Data"));
+	return strDataPath;
 }
 
 /**
@@ -206,27 +221,6 @@ String ExpandEnvironmentVariables(const String& text)
 	std::vector<tchar_t> newbuf(expandedSize);
 	::ExpandEnvironmentStrings(text.c_str(), newbuf.data(), expandedSize);
 	return newbuf.data();
-}
-
-/**
- * @brief Load registry keys from .reg file if existing .reg file
- */
-bool LoadRegistryFromFile(const String& sRegFilePath)
-{
-	if (paths::DoesPathExist(sRegFilePath) != paths::IS_EXISTING_FILE)
-		return false;
-	return launchProgram(_T("reg.exe import \"") + sRegFilePath + _T("\""), SW_HIDE);
-}
-
-/** 
- * @brief Save registry keys to .reg file if existing .reg file
- */
-bool SaveRegistryToFile(const String& sRegFilePath, const String& sRegDir)
-{
-	if (paths::DoesPathExist(sRegFilePath) != paths::IS_EXISTING_FILE)
-		return false;
-	DeleteFile(sRegFilePath.c_str());
-	return launchProgram(_T("reg.exe export HKCU\\") + sRegDir + _T(" \"") + sRegFilePath + _T("\""), SW_HIDE);
 }
 
 }

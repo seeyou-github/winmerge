@@ -169,7 +169,7 @@ inline HRESULT CComTypeInfoHolderModule<nObtainMethod>::GetTI(LCID lcid)
         // Select the way
         switch (nObtainMethod) {
             case 2: // registry, module
-                hRes = LoadRegTypeLib(*m_plibid, m_wMajor, m_wMinor, lcid, &pTypeLib);
+                hRes = E_FAIL;
             case 1: // module
                 if (SUCCEEDED(hRes)) break;
             case 3: // module, registry
@@ -179,7 +179,7 @@ inline HRESULT CComTypeInfoHolderModule<nObtainMethod>::GetTI(LCID lcid)
                 if (nObtainMethod == 1) break;
             default:
                 if (FAILED(hRes)) {
-                    hRes = LoadRegTypeLib(*m_plibid, m_wMajor, m_wMinor, lcid, &pTypeLib);
+                    hRes = E_FAIL;
                 }
         }
 		

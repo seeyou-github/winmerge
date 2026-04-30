@@ -13,7 +13,6 @@
 #include <comip.h>
 #include "unicoder.h"
 #include "Merge7zFormatRegister.h"
-#include "paths.h"
 
 typedef _com_ptr_t<_com_IIID<IFileOperation, &__uuidof(IFileOperation)>> IFileOperationPtr;
 typedef _com_ptr_t<_com_IIID<IShellItem, &__uuidof(IShellItem)>> IShellItemPtr;
@@ -46,23 +45,16 @@ static HRESULT MySHCreateEnumShellItemsFromPath(PCWSTR pszPath, IEnumShellItems 
 
 Merge7z::Format *Merge7zFormatShellImpl::GuessFormat(const String& path)
 {
-	if (!paths::IsURL(path))
+	static const tchar_t *exts[] = {_T("::{")};
+	int i;
+	for (i = 0; i < sizeof(exts) / sizeof(exts[0]); ++i)
 	{
-		int i;
-		static const tchar_t *exts[] = {_T("::{")};
-		for (i = 0; i < sizeof(exts) / sizeof(exts[0]); ++i)
-		{
-			if (path.find(exts[i]) != String::npos)
-				break;
-		}
-		if (i == sizeof(exts)/sizeof(exts[0]))
-			return nullptr;
+		if (path.find(exts[i]) != String::npos)
+			break;
 	}
-	else
-	{
-		if (path.find(_T("ftp://")) == String::npos)
-			return nullptr;
-	}
+	if (i == sizeof(exts) / sizeof(exts[0]))
+		return nullptr;
+
 	IEnumShellItemsPtr pEnumShellItems;
 	if (FAILED(MySHCreateEnumShellItemsFromPath(ucr::toUTF16(path).c_str(), &pEnumShellItems)))
 		return nullptr;

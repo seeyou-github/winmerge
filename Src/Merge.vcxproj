@@ -340,7 +340,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <MinimumRequiredVersion>5.01</MinimumRequiredVersion>
       <Profile>true</Profile>
-      <DelayLoadDLLs>wininet.dll;comdlg32.dll;oledlg.dll;version.dll;winspool.drv</DelayLoadDLLs>
+      <DelayLoadDLLs>comdlg32.dll;oledlg.dll;version.dll;winspool.drv</DelayLoadDLLs>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>res\WinMerge.exe.manifest</AdditionalManifestFiles>
@@ -398,7 +398,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <Profile>true</Profile>
-      <DelayLoadDLLs>propsys.dll;bcrypt.dll;wininet.dll;comdlg32.dll;oledlg.dll;version.dll;winspool.drv</DelayLoadDLLs>
+      <DelayLoadDLLs>propsys.dll;bcrypt.dll;comdlg32.dll;oledlg.dll;version.dll;winspool.drv</DelayLoadDLLs>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>res\WinMerge.exe.manifest</AdditionalManifestFiles>
@@ -454,7 +454,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <Profile>true</Profile>
-      <DelayLoadDLLs>propsys.dll;bcrypt.dll;wininet.dll;comdlg32.dll;oledlg.dll;version.dll;winspool.drv</DelayLoadDLLs>
+      <DelayLoadDLLs>propsys.dll;bcrypt.dll;comdlg32.dll;oledlg.dll;version.dll;winspool.drv</DelayLoadDLLs>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>res\WinMerge.exe.manifest</AdditionalManifestFiles>
@@ -510,7 +510,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <Profile>true</Profile>
-      <DelayLoadDLLs>propsys.dll;bcrypt.dll;wininet.dll;comdlg32.dll;oledlg.dll;version.dll;winspool.drv</DelayLoadDLLs>
+      <DelayLoadDLLs>propsys.dll;bcrypt.dll;comdlg32.dll;oledlg.dll;version.dll;winspool.drv</DelayLoadDLLs>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>res\WinMerge.exe.manifest</AdditionalManifestFiles>
@@ -564,7 +564,7 @@
       <GenerateMapFile>true</GenerateMapFile>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
       <MinimumRequiredVersion>5.01</MinimumRequiredVersion>
-      <DelayLoadDLLs>wininet.dll;comdlg32.dll;oledlg.dll;version.dll;winspool.drv</DelayLoadDLLs>
+      <DelayLoadDLLs>comdlg32.dll;oledlg.dll;version.dll;winspool.drv</DelayLoadDLLs>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>res\WinMerge.exe.manifest</AdditionalManifestFiles>
@@ -617,7 +617,7 @@
       <GenerateMapFile>true</GenerateMapFile>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
       <MinimumRequiredVersion>5.01</MinimumRequiredVersion>
-      <DelayLoadDLLs>wininet.dll;comdlg32.dll;oledlg.dll;version.dll;winspool.drv</DelayLoadDLLs>
+      <DelayLoadDLLs>comdlg32.dll;oledlg.dll;version.dll;winspool.drv</DelayLoadDLLs>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>res\WinMerge.exe.manifest</AdditionalManifestFiles>
@@ -668,7 +668,7 @@
       <GenerateMapFile>true</GenerateMapFile>
       <Profile>false</Profile>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
-      <DelayLoadDLLs>propsys.dll;bcrypt.dll;wininet.dll;comdlg32.dll;oledlg.dll;version.dll;winspool.drv</DelayLoadDLLs>
+      <DelayLoadDLLs>propsys.dll;bcrypt.dll;comdlg32.dll;oledlg.dll;version.dll;winspool.drv</DelayLoadDLLs>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>res\WinMerge.exe.manifest</AdditionalManifestFiles>
@@ -717,7 +717,7 @@
       <GenerateMapFile>true</GenerateMapFile>
       <Profile>false</Profile>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
-      <DelayLoadDLLs>propsys.dll;bcrypt.dll;wininet.dll;comdlg32.dll;oledlg.dll;version.dll;winspool.drv</DelayLoadDLLs>
+      <DelayLoadDLLs>propsys.dll;bcrypt.dll;comdlg32.dll;oledlg.dll;version.dll;winspool.drv</DelayLoadDLLs>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>res\WinMerge.exe.manifest</AdditionalManifestFiles>
@@ -766,7 +766,7 @@
       <GenerateMapFile>true</GenerateMapFile>
       <Profile>false</Profile>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
-      <DelayLoadDLLs>propsys.dll;bcrypt.dll;wininet.dll;comdlg32.dll;oledlg.dll;version.dll;winspool.drv</DelayLoadDLLs>
+      <DelayLoadDLLs>propsys.dll;bcrypt.dll;comdlg32.dll;oledlg.dll;version.dll;winspool.drv</DelayLoadDLLs>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>res\WinMerge.exe.manifest</AdditionalManifestFiles>
@@ -816,7 +816,7 @@
       <GenerateMapFile>true</GenerateMapFile>
       <Profile>false</Profile>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
-      <DelayLoadDLLs>propsys.dll;bcrypt.dll;wininet.dll;comdlg32.dll;oledlg.dll;version.dll;winspool.drv</DelayLoadDLLs>
+      <DelayLoadDLLs>propsys.dll;bcrypt.dll;comdlg32.dll;oledlg.dll;version.dll;winspool.drv</DelayLoadDLLs>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>res\WinMerge.exe.manifest</AdditionalManifestFiles>
@@ -864,7 +864,7 @@
       <GenerateMapFile>true</GenerateMapFile>
       <Profile>false</Profile>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
-      <DelayLoadDLLs>propsys.dll;bcrypt.dll;wininet.dll;comdlg32.dll;oledlg.dll;version.dll;winspool.drv</DelayLoadDLLs>
+      <DelayLoadDLLs>propsys.dll;bcrypt.dll;comdlg32.dll;oledlg.dll;version.dll;winspool.drv</DelayLoadDLLs>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>res\WinMerge.exe.manifest</AdditionalManifestFiles>
@@ -912,7 +912,7 @@
       <GenerateMapFile>true</GenerateMapFile>
       <Profile>false</Profile>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
-      <DelayLoadDLLs>propsys.dll;bcrypt.dll;wininet.dll;comdlg32.dll;oledlg.dll;version.dll;winspool.drv</DelayLoadDLLs>
+      <DelayLoadDLLs>propsys.dll;bcrypt.dll;comdlg32.dll;oledlg.dll;version.dll;winspool.drv</DelayLoadDLLs>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>res\WinMerge.exe.manifest</AdditionalManifestFiles>
@@ -1012,7 +1012,6 @@
     <ClCompile Include="OutputBar.cpp" />
     <ClCompile Include="OutputDoc.cpp" />
     <ClCompile Include="OutputView.cpp" />
-    <ClCompile Include="PropCompareWebPage.cpp" />
     <ClCompile Include="PropEditorCompareMerge.cpp" />
     <ClCompile Include="PropertySystem.cpp">
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -1050,11 +1049,6 @@
     </ClCompile>
     <ClCompile Include="CompareStatisticsDlg.cpp" />
     <ClCompile Include="CompareStats.cpp">
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName)2.pch</PrecompiledHeaderOutputFile>
-    </ClCompile>
-    <ClCompile Include="ConfigLog.cpp">
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName)2.pch</PrecompiledHeaderOutputFile>
@@ -1409,16 +1403,6 @@
     <ClCompile Include="PropShell.cpp" />
     <ClCompile Include="PropSyntaxColors.cpp" />
     <ClCompile Include="PropTextColors.cpp" />
-    <ClCompile Include="Common\RegKey.cpp">
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName)2.pch</PrecompiledHeaderOutputFile>
-    </ClCompile>
-    <ClCompile Include="Common\RegOptionsMgr.cpp">
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName)2.pch</PrecompiledHeaderOutputFile>
-    </ClCompile>
     <ClCompile Include="SaveClosingDlg.cpp" />
     <ClCompile Include="Common\scbarcf.cpp" />
     <ClCompile Include="Common\scbarg.cpp" />
@@ -1485,7 +1469,6 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName)2.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
-    <ClCompile Include="WebPageDiffFrm.cpp" />
     <ClCompile Include="WildcardDropList.cpp" />
     <ClCompile Include="WindowsManager.cpp" />
     <ClCompile Include="WindowsManagerDialog.cpp" />
@@ -1541,7 +1524,6 @@
     <ClInclude Include="OutputBar.h" />
     <ClInclude Include="OutputDoc.h" />
     <ClInclude Include="OutputView.h" />
-    <ClInclude Include="PropCompareWebPage.h" />
     <ClInclude Include="PropEditorCompareMerge.h" />
     <ClInclude Include="PropertySystem.h" />
     <ClInclude Include="PropertySystemMenu.h" />
@@ -1558,7 +1540,6 @@
     <ClInclude Include="CompareOptions.h" />
     <ClInclude Include="CompareStatisticsDlg.h" />
     <ClInclude Include="CompareStats.h" />
-    <ClInclude Include="ConfigLog.h" />
     <ClInclude Include="ConfirmFolderCopyDlg.h" />
     <ClInclude Include="ConflictFileParser.h" />
     <ClInclude Include="Common\coretools.h" />
@@ -1700,8 +1681,6 @@
     <ClInclude Include="PropShell.h" />
     <ClInclude Include="PropSyntaxColors.h" />
     <ClInclude Include="PropTextColors.h" />
-    <ClInclude Include="Common\RegKey.h" />
-    <ClInclude Include="Common\RegOptionsMgr.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SaveClosingDlg.h" />
     <ClInclude Include="Common\scbarcf.h" />
@@ -1727,7 +1706,6 @@
     <ClInclude Include="TrDialogs.h" />
     <ClInclude Include="Common\varprop.h" />
     <ClInclude Include="Common\VersionInfo.h" />
-    <ClInclude Include="WebPageDiffFrm.h" />
     <ClInclude Include="WildcardDropList.h" />
     <ClInclude Include="WindowsManager.h" />
     <ClInclude Include="WindowsManagerDialog.h" />
@@ -1807,7 +1785,6 @@
     <Image Include="res\equalfolder.ico" />
     <Image Include="res\equalimage.ico" />
     <Image Include="res\equaltextfile.ico" />
-    <Image Include="res\equalwebpage.ico" />
     <Image Include="res\exit.bmp" />
     <Image Include="res\FileFilter.ico" />
     <Image Include="res\fileunknown.ico" />
@@ -1844,11 +1821,9 @@
     <Image Include="res\new3_hex.bmp" />
     <Image Include="res\new3_image.bmp" />
     <Image Include="res\new3_table.bmp" />
-    <Image Include="res\new3_webpage.bmp" />
     <Image Include="res\new_hex.bmp" />
     <Image Include="res\new_image.bmp" />
     <Image Include="res\new_table.bmp" />
-    <Image Include="res\new_webpage.bmp" />
     <Image Include="res\next_bookmark.bmp" />
     <Image Include="res\notequalfile12.ico" />
     <Image Include="res\notequalfile13.ico" />
@@ -1856,7 +1831,6 @@
     <Image Include="res\notequalfolder.ico" />
     <Image Include="res\notequalimage.ico" />
     <Image Include="res\notequaltextfile.ico" />
-    <Image Include="res\notequalwebpage.ico" />
     <Image Include="res\open_conflict.bmp" />
     <Image Include="res\paste.bmp" />
     <Image Include="res\patch.bmp" />

@@ -65,7 +65,6 @@ AppVerName=WinMerge {#ARCH}
 AppPublisher=Thingamahoochie Software
 AppPublisherURL=https://WinMerge.org/
 AppSupportURL=https://WinMerge.org/
-AppUpdatesURL=https://WinMerge.org/
 AppCopyright=(c) 1996-{#CurYear} Dean P. Grimm / Thingamahoochie Software
 
 ; Installer executable's version resource info
@@ -590,7 +589,6 @@ Source: ..\..\Plugins\dlls\CompareMSVisioFiles.sct; DestDir: {app}\MergePlugins;
 Source: ..\..\Plugins\dlls\ApplyPatch.sct; DestDir: {app}\MergePlugins; Flags: IgnoreVersion CompareTimeStamp; Components: Plugins
 Source: ..\..\Plugins\dlls\PrediffLineFilter.sct; DestDir: {app}\MergePlugins; Flags: IgnoreVersion CompareTimeStamp; Components: Plugins
 Source: ..\..\Plugins\dlls\IgnoreLeadingLineNumbers.sct; DestDir: {app}\MergePlugins; Flags: ignoreversion replacesameversion; Components: Plugins
-Source: ..\..\Plugins\dlls\AI.sct; DestDir: {app}\MergePlugins; Flags: ignoreversion replacesameversion; Components: Plugins
 Source: ..\..\Plugins\dlls\{#ARCH}\IgnoreColumns.dll; DestDir: {app}\MergePlugins; Flags: ignoreversion replacesameversion; Components: Plugins
 Source: ..\..\Plugins\dlls\{#ARCH}\IgnoreCommentsC.dll; DestDir: {app}\MergePlugins; Flags: ignoreversion replacesameversion; Components: Plugins
 Source: ..\..\Plugins\dlls\{#ARCH}\IgnoreFieldsComma.dll; DestDir: {app}\MergePlugins; Flags: ignoreversion replacesameversion; Components: Plugins
@@ -625,9 +623,6 @@ Source: ..\..\Build\{#ARCH}\Release\WinIMerge\freeimage-license-gplv2.txt; DestD
 Source: ..\..\Build\{#ARCH}\Release\WinIMerge\WinIMergeLib.dll; DestDir: {app}\WinIMerge; Flags: ignoreversion replacesameversion; Components: Core
 Source: ..\..\Build\{#ARCH}\Release\WinIMerge\vcomp140.dll; DestDir: {app}; Components: Core
 
-;WinWebDiff
-Source: ..\..\Build\{#ARCH}\Release\WinWebDiff\LICENSE*.txt; DestDir: {app}\WinWebDiff; Components: Core
-Source: ..\..\Build\{#ARCH}\Release\WinWebDiff\WinWebDiffLib.dll; DestDir: {app}\WinWebDiff; Flags: ignoreversion replacesameversion; Components: Core
 
 ;darkmodelib
 Source: ..\..\Build\{#ARCH}\Release\darkmodelib\LICENSE.md; DestDir: {app}\darkmodelib; Components: Core
@@ -683,116 +678,6 @@ Name: {group}\{cm:UsersGuide}; Filename: {app}\Docs\WinMerge.chm; Check: not Wiz
 ;Desktop Icon
 Name: {commondesktop}\WinMerge; Filename: {app}\WinMergeU.exe; Tasks: desktopicon
 
-[Registry]
-Root: HKU; Subkey: {code:GetOriginalUserSID}\Software\Thingamahoochie; Flags: uninsdeletekeyifempty
-Root: HKU; Subkey: {code:GetOriginalUserSID}\Software\Thingamahoochie\WinMerge; Flags: uninsdeletekey
-Root: HKLM; Subkey: Software\Thingamahoochie; Flags: uninsdeletekeyifempty
-Root: HKLM; Subkey: Software\Thingamahoochie\WinMerge; Flags: uninsdeletekey
-
-;Add Project file extension (.WinMerge) to known extensions and
-;set WinMerge to open those files
-;set Notepad to edit project files
-Root: HKCR; Subkey: .WinMerge; ValueType: String; ValueData: WinMerge.Project.File; Flags: uninsdeletekey
-Root: HKCR; Subkey: WinMerge.Project.File; ValueType: String; ValueData: {cm:ProjectFileDesc}; Flags: uninsdeletekey
-Root: HKCR; Subkey: WinMerge.Project.File\shell\open\command; ValueType: String; ValueData: """{app}\WinMergeU.exe"" ""%1"""; Flags: uninsdeletekey
-Root: HKCR; Subkey: WinMerge.Project.File\shell\edit\command; ValueType: String; ValueData: """NOTEPAD.EXE"" ""%1"""; Flags: uninsdeletekey
-Root: HKCR; Subkey: WinMerge.Project.File\DefaultIcon; ValueType: String; ValueData: """{app}\WinMergeU.exe"",1"; Flags: uninsdeletekey
-
-; delete obsolete values
-;In Inno Setup Version 4.18 ValueData couldn't be null and compile,
-;if this is fixed in a later version feel free to remove the parameter
-Root: HKCU; Subkey: Software\Thingamahoochie\WinMerge\Settings; ValueType: none; ValueName: LeftMax; Flags: deletevalue
-Root: HKCU; Subkey: Software\Thingamahoochie\WinMerge\Settings; ValueType: none; ValueName: DirViewMax; Flags: deletevalue
-
-;This removes the key that remembers which messageboxes to hide from the user, this is because the text of that message
-;can change and make it more clear as to the user why they might want to pay attention to a particular dialog and also
-;because a particular message might be added or removed and a new message might occupy a previous message's ID number
-Root: HKLM; Subkey: Software\Thingamahoochie\WinMerge\MessageBoxes; ValueType: none; Flags: deletekey
-
-Root: HKCR; SubKey: Directory\Shell\WinMerge\command; ValueType: none; Flags: deletekey noerror
-Root: HKCR; SubKey: Directory\Shell\WinMerge; ValueType: none; Flags: deletekey noerror
-
-;Adds "Start Menu" --> "Run" Support for WinMerge
-Root: HKLM; Subkey: Software\Microsoft\Windows\CurrentVersion\App Paths\WinMerge.exe; ValueType: none; Flags: uninsdeletekey
-Root: HKLM; Subkey: Software\Microsoft\Windows\CurrentVersion\App Paths\WinMergeU.exe; ValueType: none; Flags: uninsdeletekey
-Root: HKLM; SubKey: SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\WinMerge.exe; ValueType: string; ValueName: ; ValueData: {app}\WinMergeU.exe
-Root: HKLM; SubKey: SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\WinMergeU.exe; ValueType: string; ValueName: ; ValueData: {app}\WinMergeU.exe
-
-;Registry Keys for use by ShellExtension.dll
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge; ValueType: string; ValueName: Executable; ValueData: {app}\WinMergeU.exe
-Root: HKU; SubKey: {code:GetOriginalUserSID}\Software\Thingamahoochie\WinMerge; ValueType: string; ValueName: Executable; ValueData: {app}\WinMergeU.exe
-
-;Enables or disables the Context Menu preference based on what the user selects during install
-;Initially the Context menu is explicitly disabled:
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge; ValueType: dword; ValueName: ContextMenuEnabled; ValueData: 0;
-
-;If the user chose to use the context menu then we re-enable it.  This is necessary so it'll turn on and off not just on.
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge; ValueType: dword; ValueName: ContextMenuEnabled; ValueData: 1; Tasks: ShellExtension
-Root: HKU; SubKey: {code:GetOriginalUserSID}\Software\Thingamahoochie\WinMerge; ValueType: dword; ValueName: ContextMenuEnabled; ValueData: {code:ShellMenuEnabled}
-
-;If WinMerge.exe is installed then we'll automatically configure WinMerge as the differencing application
-Root: HKU; SubKey: {code:GetOriginalUserSID}\Software\TortoiseCVS; ValueType: string; ValueName: External Diff Application; ValueData: {app}\WinMergeU.exe; Flags: uninsdeletevalue; Tasks: TortoiseCVS
-Root: HKU; SubKey: {code:GetOriginalUserSID}\Software\TortoiseCVS; ValueType: dword; ValueName: DiffAsUnicode; ValueData: $00000001; Flags: uninsdeletevalue; Tasks: TortoiseCVS
-Root: HKU; SubKey: {code:GetOriginalUserSID}\Software\TortoiseCVS\Prefs\External Diff Application; ValueType: string; ValueName: _; ValueData: {app}\WinMergeU.exe; Flags: uninsdeletevalue dontcreatekey; Tasks: TortoiseCVS
-Root: HKU; SubKey: {code:GetOriginalUserSID}\Software\TortoiseCVS\Prefs\External Diff2 Params; ValueType: string; ValueName: _; ValueData: """%1"" ""%2"""; Flags: uninsdeletevalue dontcreatekey; Tasks: TortoiseCVS
-
-;Tells TortoiseCVS to use WinMerge as its differencing application (this happens whether or not Tortoise is current installed, that way
-;if it is installed at a later date this will automatically support it)
-Root: HKU; SubKey: {code:GetOriginalUserSID}\Software\TortoiseCVS; ValueType: string; ValueName: External Merge Application; ValueData: {app}\WinMergeU.exe; Flags: uninsdeletevalue; Tasks: TortoiseCVS
-Root: HKU; SubKey: {code:GetOriginalUserSID}\Software\TortoiseCVS; ValueType: dword; ValueName: MergeAsUnicode; ValueData: $00000001; Flags: uninsdeletevalue; Tasks: TortoiseCVS
-Root: HKU; SubKey: {code:GetOriginalUserSID}\Software\TortoiseCVS\Prefs\External Merge Application; ValueType: string; ValueName: _; ValueData: {app}\WinMergeU.exe; Flags: uninsdeletevalue dontcreatekey; Tasks: TortoiseCVS
-Root: HKU; SubKey: {code:GetOriginalUserSID}\Software\TortoiseCVS\Prefs\External Merge2 Params; ValueType: string; ValueName: _; ValueData: """%mine"" ""%yours"""; Flags: uninsdeletevalue dontcreatekey; Tasks: TortoiseCVS
-
-;Set WinMerge as TortoiseGit diff tool
-Root: HKU; SubKey: {code:GetOriginalUserSID}\Software\TortoiseGit; ValueType: string; ValueName: Diff; ValueData: {app}\WinMergeU.exe -e -ub -dl %bname -dr %yname %base %mine; Flags: uninsdeletevalue; Tasks: TortoiseGit
-Root: HKU; SubKey: {code:GetOriginalUserSID}\Software\TortoiseGit; ValueType: string; ValueName: Merge; ValueData: {code:TortoiseSVNGitMergeToolCommandLine}; Flags: uninsdeletevalue; Check: UseAs3WayMergeTool; Tasks: TortoiseGit
-
-;Set WinMerge as TortoiseSVN diff tool
-Root: HKU; SubKey: {code:GetOriginalUserSID}\Software\TortoiseSVN; ValueType: string; ValueName: Diff; ValueData: {app}\WinMergeU.exe -e -ub -dl %bname -dr %yname %base %mine; Flags: uninsdeletevalue; Tasks: TortoiseSVN
-Root: HKU; SubKey: {code:GetOriginalUserSID}\Software\TortoiseSVN; ValueType: string; ValueName: Merge; ValueData: {code:TortoiseSVNGitMergeToolCommandLine}; Flags: uninsdeletevalue; Check: UseAs3WayMergeTool; Tasks: TortoiseSVN
-
-;Whatever the user chooses at the [Select Setup Language] dialog should also determine what language WinMerge will start up in
-;(unless the user already has a startup language specified)
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $00001401; Flags: deletevalue; Languages: Arabic
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $0000042d; Flags: deletevalue; Languages: Basque
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $00000402; Flags: deletevalue; Languages: Bulgarian
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $00000403; Flags: deletevalue; Languages: Catalan
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $00000804; Flags: deletevalue; Languages: ChineseSimplified
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $00000404; Flags: deletevalue; Languages: ChineseTraditional
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $00000483; Flags: deletevalue; Languages: Corsican
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $0000041a; Flags: deletevalue; Languages: Croatian
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $00000405; Flags: deletevalue; Languages: Czech
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $00000406; Flags: deletevalue; Languages: Danish
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $00000413; Flags: deletevalue; Languages: Dutch
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $00000409; Flags: deletevalue; Languages: English
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $0000040b; Flags: deletevalue; Languages: Finnish
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $0000040c; Flags: deletevalue; Languages: French
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $00000456; Flags: deletevalue; Languages: Galician
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $00000407; Flags: deletevalue; Languages: German
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $00000408; Flags: deletevalue; Languages: Greek
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $0000040e; Flags: deletevalue; Languages: Hungarian
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $00000410; Flags: deletevalue; Languages: Italian
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $00000411; Flags: deletevalue; Languages: Japanese
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $00000412; Flags: deletevalue; Languages: Korean
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $00000427; Flags: deletevalue; Languages: Lithuanian 
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $00000414; Flags: deletevalue; Languages: Norwegian
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $00000429; Flags: deletevalue; Languages: Persian
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $00000415; Flags: deletevalue; Languages: Polish
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $00000816; Flags: deletevalue; Languages: Portuguese
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $00000416; Flags: deletevalue; Languages: PortugueseBrazilian
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $00000418; Flags: deletevalue; Languages: Romanian
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $00000419; Flags: deletevalue; Languages: Russian
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $00000c1a; Flags: deletevalue; Languages: Serbian
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $0000045b; Flags: deletevalue; Languages: Sinhala
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $0000041b; Flags: deletevalue; Languages: Slovak
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $00000424; Flags: deletevalue; Languages: Slovenian
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $00000c0a; Flags: deletevalue; Languages: Spanish
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $0000041D; Flags: deletevalue; Languages: Swedish
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $00000449; Flags: deletevalue; Languages: Tamil
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $0000041f; Flags: deletevalue; Languages: Turkish
-Root: HKLM; SubKey: Software\Thingamahoochie\WinMerge\Locale; ValueType: dword; ValueName: LanguageId; ValueData: $00000422; Flags: deletevalue; Languages: Ukrainian
-
-
 [Run]
 ;This will no longer appear unless the user chose to make a start menu group in the first place
 Filename: {win}\Explorer.exe; Description: {cm:ViewStartMenuFolder}; Parameters: """{group}"""; Flags: waituntilidle postinstall skipifsilent unchecked; Check: GroupCreated
@@ -825,7 +710,7 @@ Var
     g_IsExplorerRestartRequired: boolean;
 
 #include "originaluser.iss"
-    
+
 {Determines whether or not the user chose to create a start menu}
 Function GroupCreated(): boolean;
 Var
@@ -859,31 +744,24 @@ End;
 {Determines whether or not TortoiseCVS is installed}
 Function TortoiseCVSInstalled(): boolean;
 Begin
-	{This absolutely must remain as \CustomIcons, because our application used to create some TortoiseCVS keys even if the application wasn't installed!}
-    Result := RegKeyExists(HKEY_LOCAL_MACHINE, 'SOFTWARE\TortoiseCVS\CustomIcons') or RegKeyExists(HKEY_LOCAL_MACHINE, 'SOFTWARE\TortoiseCVS\Icons');
+    Result := False;
 End;
 
 {Determines whether or not TortoiseGit is installed}
 Function TortoiseGitInstalled(): boolean;
 Begin
-    Result := RegKeyExists(HKEY_LOCAL_MACHINE, 'SOFTWARE\TortoiseGit') or RegKeyExists(HKEY_LOCAL_MACHINE, 'SOFTWARE\Classes\Directory\Background\shellex\ContextMenuHandlers\TortoiseGit');
+    Result := False;
 End;
 
 {Determines whether or not TortoiseSVN is installed}
 Function TortoiseSVNInstalled(): boolean;
 Begin
-    Result := RegKeyExists(HKEY_LOCAL_MACHINE, 'SOFTWARE\TortoiseSVN') or RegKeyExists(HKEY_LOCAL_MACHINE, 'SOFTWARE\Classes\Directory\Background\shellex\ContextMenuHandlers\TortoiseSVN');
+    Result := False;
 End;
 
 Function OldGroup(): string;
-Var
-    carNoIcons: Cardinal;
 Begin
-    {Stores where in \All Users\Programs\ our start menu used to be located}
-     RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\WinMerge_is1', 'Inno Setup: Icon Group', Result);
-     carNoIcons := 0;
-     RegQueryDWORDValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\WinMerge_is1', 'Inno Setup: No Icons', carNoIcons);
-     if carNoIcons <> 0 Then Result := '';
+    Result := '';
 End;
 
 Procedure DeletePreviousStartMenu();
@@ -923,11 +801,7 @@ Begin
 End;
 
 Function UnregisterWinMergeContextMenuPackage: Boolean;
-var
-  ResultCode: Integer;
-Begin;
-  if RegKeyExists(HKLM, 'SOFTWARE\Classes\PackagedCom\ClassIndex\{90340779-F37E-468E-9728-A2593498ED32}') then
-    Exec(ExpandConstant('{win}\sysnative\WindowsPowerShell\v1.0\PowerShell.exe'), '-NoProfile -WindowStyle Hidden -c "Get-AppxPackage -name WinMerge | Remove-AppxPackage"', '', SW_SHOW, ewWaitUntilTerminated, ResultCode);  
+Begin
   Result := true;
 End;
 
@@ -991,15 +865,7 @@ begin
 end;
 
 procedure RegisterUserTasks();
-var
-  params: string;
-  UserTasksFlags: DWORD;
-  ResultCode: Integer;
-Begin
-  UserTasksFlags := 4097; { 4096(Clipboard Compare)+1(New Text Compare) }
-  RegQueryDWORDValue(HKCU, 'Software\Thingamahoochie\WinMerge', 'UserTasksFlags', UserTasksFlags);
-  params := '/s- /minimize /noninteractive /set-usertasks-to-jumplist ' + IntToStr(UserTasksFlags);
-  Exec(ExpandConstant('{app}\WinMergeU.exe'), params, '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+begin
 end;
 
 {This event procedure is queed each time the user changes pages within the installer}
@@ -1015,18 +881,9 @@ Begin
     End;
 End;
 
-// Checks if context menu is already enabled for shell extension
-// If so, we won't overwrite its existing value in [Registry] section
 Function ShellMenuEnabled(Unused: string): string;
-Var
-  ContextMenuEnabled: DWORD;
 Begin
-  ContextMenuEnabled := 0;
-  RegQueryDWORDValue(HKCU, 'Software\Thingamahoochie\WinMerge', 'ContextMenuEnabled', ContextMenuEnabled);
-  if IsTaskSelected('ShellExtension') then
-    Result := inttostr(ContextMenuEnabled or 1)
-  else
-    Result := '0';
+  Result := '0';
 End;
 
 // Add WinMerge to system path.
@@ -1101,7 +958,7 @@ Begin
 	end;
 End;
 
-function BooleanToString(Value : Boolean) : String; 
+function BooleanToString(Value : Boolean) : String;
 begin
   if Value then
     Result := 'true'
@@ -1109,7 +966,7 @@ begin
     Result := 'false';
 end;
 
-function StringToBoolean(Value : String) : Boolean; 
+function StringToBoolean(Value : String) : Boolean;
 begin
   if Value = 'true' then
     Result := true

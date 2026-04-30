@@ -511,7 +511,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Common\LanguageSelect.cpp" />
-    <ClCompile Include="..\Common\RegKey.cpp" />
     <ClCompile Include="..\Common\UnicodeString.cpp" />
     <ClCompile Include="..\Common\WinMergeContextMenu.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -572,7 +571,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Common\LanguageSelect.h" />
-    <ClInclude Include="..\Common\RegKey.h" />
     <ClInclude Include="..\Common\UnicodeString.h" />
     <ClInclude Include="..\Common\WinMergeContextMenu.h" />
     <ClInclude Include="Resource.h" />

@@ -24,9 +24,6 @@ https://github.com/WinMerge/winimerge/releases/download/v1.0.51/winimerge-1.0.51
 https://github.com/WinMerge/winimerge/releases/download/v1.0.51/winimerge-1.0.51-x64.zip!Build\x64\Release ^
 https://github.com/WinMerge/winimerge/releases/download/v1.0.51/winimerge-1.0.51-ARM.zip!Build\ARM\Release ^
 https://github.com/WinMerge/winimerge/releases/download/v1.0.51/winimerge-1.0.51-ARM64.zip!Build\ARM64\Release ^
-https://github.com/WinMerge/winwebdiff/releases/download/v1.0.20/winwebdiff-1.0.20.0-x86.zip!Build\x86\Release ^
-https://github.com/WinMerge/winwebdiff/releases/download/v1.0.20/winwebdiff-1.0.20.0-x64.zip!Build\x64\Release ^
-https://github.com/WinMerge/winwebdiff/releases/download/v1.0.20/winwebdiff-1.0.20.0-ARM64.zip!Build\ARM64\Release ^
 https://github.com/WinMerge/darkmodelib/releases/download/v0.21.2/darkmodelib-0.21.2.0-x86.zip!Build\x86\Release ^
 https://github.com/WinMerge/darkmodelib/releases/download/v0.21.2/darkmodelib-0.21.2.0-x64.zip!Build\x64\Release ^
 https://github.com/WinMerge/darkmodelib/releases/download/v0.21.2/darkmodelib-0.21.2.0-ARM64.zip!Build\ARM64\Release ^
@@ -112,7 +109,6 @@ for %%i in (x86 x64 ARM ARM64) do (
     echo **** %%i %%j ****
     mkdir Build\%%i\%%j\Merge7z 2> NUL
     mkdir Build\%%i\%%j\WinIMerge 2> NUL
-    mkdir Build\%%i\%%j\WinWebDiff 2> NUL
     mkdir Build\%%i\%%j\Frhed 2> NUL
     mkdir Build\%%i\%%j\darkmodelib 2> NUL
     mkdir Build\%%i\%%j\Filters 2> NUL
@@ -130,7 +126,6 @@ for %%i in (x86 x64 ARM ARM64) do (
       xcopy /s/y Build\%%i\Release\Frhed Build\%%i\%%j\Frhed\
       echo ** WinIMerge
       copy Build\%%i\Release\WinIMerge\WinIMergeLib.dll Build\%%i\%%j\WinIMerge\ 2> NUL
-      copy Build\%%i\Release\WinWebDiff\WinWebDiffLib.dll Build\%%i\%%j\WinWebDiff\ 2> NUL
       copy Build\%%i\Release\darkmodelib\darkmode.dll Build\%%i\%%j\darkmodelib\ 2> NUL
     )
     echo ** jq

@@ -21,13 +21,12 @@ String GetProgPath();
 String GetWindowsDirectory();
 String GetMyDocuments();
 String GetAppDataPath();
+String GetConfigPath();
+String GetDataPath();
 String GetSystemTempPath();
 
 String GetPerInstanceString(const String& name);
 
 String ExpandEnvironmentVariables(const String& text);
-
-bool LoadRegistryFromFile(const String& sRegFilePath);
-bool SaveRegistryToFile(const String& sRegFilePath, const String& sRegDir);
 
 }

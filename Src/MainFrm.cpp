@@ -15,7 +15,6 @@
 #include "EditorFilepathBar.h"
 #include <vector>
 #include <unordered_set>
-#include <afxinet.h>
 #if !defined(__cppcheck__)
 #include <boost/range/mfc.hpp>
 #endif
@@ -37,7 +36,6 @@
 #include "HexMergeDoc.h"
 #include "HexMergeView.h"
 #include "ImgMergeFrm.h"
-#include "WebPageDiffFrm.h"
 #include "OutputDoc.h"
 #include "OutputBar.h"
 #include "OutputView.h"
@@ -52,7 +50,6 @@
 #include "Environment.h"
 #include "PatchTool.h"
 #include "Plugins.h"
-#include "ConfigLog.h"
 #include "7zCommon.h"
 #include "Merge7zFormatMergePluginImpl.h"
 #include "FiltersPropertySheet.h"
@@ -85,9 +82,6 @@
 #include "ColorSchemes.h"
 #include "OptionsSyntaxColors.h"
 #include "SysColorHook.h"
-#include <Poco/Logger.h>
-#include <Poco/AsyncChannel.h>
-#include <Poco/SimpleFileChannel.h>
 
 #if !defined(SM_CXPADDEDBORDER)
 #define SM_CXPADDEDBORDER       92
@@ -114,13 +108,11 @@ const CMainFrame::MENUITEM_ICON CMainFrame::m_MenuIcons[] = {
 	{ ID_FILE_NEW_TABLE,			IDB_FILE_NEW_TABLE,				CMainFrame::MENU_ALL },
 	{ ID_FILE_NEW_HEX,				IDB_FILE_NEW_HEX,				CMainFrame::MENU_ALL },
 	{ ID_FILE_NEW_IMAGE,			IDB_FILE_NEW_IMAGE,				CMainFrame::MENU_ALL },
-	{ ID_FILE_NEW_WEBPAGE,			IDB_FILE_NEW_WEBPAGE,			CMainFrame::MENU_ALL },
 	{ ID_FILE_NEW_FOLDER,			IDB_FILE_NEW_FOLDER,			CMainFrame::MENU_ALL },
 	{ ID_FILE_NEW3,					IDB_FILE_NEW3,					CMainFrame::MENU_ALL },
 	{ ID_FILE_NEW3_TABLE,			IDB_FILE_NEW3_TABLE,			CMainFrame::MENU_ALL },
 	{ ID_FILE_NEW3_HEX,				IDB_FILE_NEW3_HEX,				CMainFrame::MENU_ALL },
 	{ ID_FILE_NEW3_IMAGE,			IDB_FILE_NEW3_IMAGE,			CMainFrame::MENU_ALL },
-	{ ID_FILE_NEW3_WEBPAGE,			IDB_FILE_NEW3_WEBPAGE,			CMainFrame::MENU_ALL },
 	{ ID_FILE_NEW3_FOLDER,			IDB_FILE_NEW_FOLDER,			CMainFrame::MENU_ALL },
 	{ ID_EDIT_COPY,					IDB_EDIT_COPY,					CMainFrame::MENU_ALL },
 	{ ID_EDIT_CUT,					IDB_EDIT_CUT,					CMainFrame::MENU_ALL },
@@ -255,13 +247,11 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWnd)
 	ON_COMMAND(ID_FILE_NEW_TABLE, (OnFileNew<2, ID_MERGE_COMPARE_TABLE>))
 	ON_COMMAND(ID_FILE_NEW_HEX, (OnFileNew<2, ID_MERGE_COMPARE_HEX>))
 	ON_COMMAND(ID_FILE_NEW_IMAGE, (OnFileNew<2, ID_MERGE_COMPARE_IMAGE>))
-	ON_COMMAND(ID_FILE_NEW_WEBPAGE, (OnFileNew<2, ID_MERGE_COMPARE_WEBPAGE>))
 	ON_COMMAND(ID_FILE_NEW_FOLDER, (OnFileNew<2, ID_MERGE_COMPARE_FOLDER>))
 	ON_COMMAND(ID_FILE_NEW3, (OnFileNew<3, ID_MERGE_COMPARE_TEXT>))
 	ON_COMMAND(ID_FILE_NEW3_TABLE, (OnFileNew<3, ID_MERGE_COMPARE_TABLE>))
 	ON_COMMAND(ID_FILE_NEW3_HEX, (OnFileNew<3, ID_MERGE_COMPARE_HEX>))
 	ON_COMMAND(ID_FILE_NEW3_IMAGE, (OnFileNew<3, ID_MERGE_COMPARE_IMAGE>))
-	ON_COMMAND(ID_FILE_NEW3_WEBPAGE, (OnFileNew<3, ID_MERGE_COMPARE_WEBPAGE>))
 	ON_COMMAND(ID_FILE_NEW3_FOLDER,  (OnFileNew<3, ID_MERGE_COMPARE_FOLDER>))
 	ON_COMMAND(ID_FILE_OPEN, OnFileOpen)
 	ON_COMMAND(ID_FILE_OPENPROJECT, OnFileOpenProject)
@@ -313,9 +303,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWnd)
 	// [Help] menu
 	ON_COMMAND(ID_HELP_CONTENTS, OnHelpContents)
 	ON_COMMAND(ID_HELP_GNULICENSE, OnHelpGnulicense)
-	ON_COMMAND(ID_HELP_GETCONFIG, OnSaveConfigData)
 	ON_COMMAND(ID_HELP_RELEASENOTES, OnHelpReleasenotes)
-	ON_COMMAND(ID_HELP_TRANSLATIONS, OnHelpTranslations)
 	// Tool bar icon
 	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, OnToolTipText)
 	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, OnToolTipText)
@@ -398,8 +386,6 @@ CMainFrame::CMainFrame()
 , m_bShowErrors(false)
 , m_pDirWatcher(new DirWatcher())
 , m_pOutputDoc(nullptr)
-, m_pLogChannel(nullptr)
-, m_logging(GetOptionsMgr()->GetInt(OPT_LOGGING))
 {
 	InitializeCriticalSection(&m_cs);
 }
@@ -570,7 +556,6 @@ HMENU CMainFrame::NewMenu(int view, int ID)
 	case MENU_MERGEVIEW:
 	case MENU_HEXMERGEVIEW:
 	case MENU_IMGMERGEVIEW:
-	case MENU_WEBPAGEDIFFVIEW:
 		menu_view = MENU_FILECMP;
 		break;
 	case MENU_DIRVIEW:
@@ -593,13 +578,6 @@ HMENU CMainFrame::NewMenu(int view, int ID)
 		m_pImageMenu.reset(new BCMenu);
 		m_pImageMenu->LoadMenu(MAKEINTRESOURCE(IDR_POPUP_IMGMERGEVIEW));
 		m_pMenus[view]->InsertMenu(4, MF_BYPOSITION | MF_POPUP, (UINT_PTR)m_pImageMenu->GetSubMenu(0)->m_hMenu, const_cast<tchar_t *>(I18n::LoadString(IDS_IMAGE_MENU).c_str())); 
-	}
-
-	if (view == MENU_WEBPAGEDIFFVIEW)
-	{
-		m_pWebPageMenu.reset(new BCMenu);
-		m_pWebPageMenu->LoadMenu(MAKEINTRESOURCE(IDR_POPUP_WEBPAGEDIFFVIEW));
-		m_pMenus[view]->InsertMenu(4, MF_BYPOSITION | MF_POPUP, (UINT_PTR)m_pWebPageMenu->GetSubMenu(0)->m_hMenu, const_cast<tchar_t *>(I18n::LoadString(IDS_WEBPAGE_MENU).c_str())); 
 	}
 
 	// Load bitmaps to menuitems
@@ -656,14 +634,6 @@ HMENU CMainFrame::NewHexMergeViewMenu()
 HMENU CMainFrame::NewImgMergeViewMenu()
 {
 	return NewMenu( MENU_IMGMERGEVIEW, IDR_MERGEDOCTYPE);
-}
-
-/**
- * @brief Create new Webpage compare (CWebPageMergeView) menu.
- */
-HMENU CMainFrame::NewWebPageDiffViewMenu()
-{
-	return NewMenu( MENU_WEBPAGEDIFFVIEW, IDR_MERGEDOCTYPE);
 }
 
 /**
@@ -835,8 +805,6 @@ bool CMainFrame::ShowAutoMergeDoc(UINT nID, IDirDoc * pDirDoc,
 	filterBin.SetMaskOrExpression(binPatterns);
 	for (int pane = 0; pane < nFiles; ++pane)
 	{
-		if (CWebPageDiffFrame::MatchURLPattern(ifileloc[pane].filepath))
-			return ShowWebDiffDoc(pDirDoc, nFiles, ifileloc, dwFlags, strDesc, sReportFile, infoUnpacker, infoPrediffer, dynamic_cast<const OpenWebPageParams*>(pOpenParams));
 		String filepath = ifileloc[pane].filepath + unpackedFileExtension;
 		if (!imgPatterns.empty() && filterImg.includeFile(filepath) && CImgMergeFrame::IsLoadable())
 			return ShowImgMergeDoc(pDirDoc, nFiles, ifileloc, dwFlags, strDesc, sReportFile, infoUnpacker, infoPrediffer, dynamic_cast<const OpenImageFileParams *>(pOpenParams));
@@ -857,9 +825,6 @@ bool CMainFrame::ShowAutoMergeDoc(UINT nID, IDirDoc * pDirDoc,
 	case ID_MERGE_COMPARE_IMAGE:
 		return ShowImgMergeDoc(pDirDoc, nFiles, ifileloc, dwFlags,
 			strDesc, sReportFile, infoUnpacker, infoPrediffer, dynamic_cast<const OpenImageFileParams*>(pOpenParams));
-	case ID_MERGE_COMPARE_WEBPAGE:
-		return ShowWebDiffDoc(pDirDoc, nFiles, ifileloc, dwFlags,
-			strDesc, sReportFile, infoUnpacker, infoPrediffer, dynamic_cast<const OpenWebPageParams*>(pOpenParams));
 	case ID_MERGE_COMPARE_FOLDER:
 		return ShowDirDoc(nullptr, nFiles, ifileloc, dwFlags,
 			strDesc, sReportFile, infoUnpacker, infoPrediffer, dynamic_cast<const OpenFolderParams*>(pOpenParams));
@@ -900,10 +865,6 @@ bool CMainFrame::ShowMergeDoc(UINT nID, IDirDoc* pDirDoc,
 		return ShowImgMergeDoc(pDirDoc, nFiles, ifileloc, dwFlags,
 			strDesc, sReportFile, infoUnpacker, infoPrediffer,
 			dynamic_cast<const OpenImageFileParams*>(pOpenParams));
-	case ID_MERGE_COMPARE_WEBPAGE:
-		return ShowWebDiffDoc(pDirDoc, nFiles, ifileloc, dwFlags,
-			strDesc, sReportFile, infoUnpacker, infoPrediffer,
-			dynamic_cast<const OpenWebPageParams*>(pOpenParams));
 	case ID_MERGE_COMPARE_FOLDER:
 		return ShowDirDoc(nullptr, nFiles, ifileloc, dwFlags,
 			strDesc, sReportFile, infoUnpacker, infoPrediffer,
@@ -1128,41 +1089,6 @@ bool CMainFrame::ShowImgMergeDoc(IDirDoc * pDirDoc, int nFiles, const FileLocati
 	return true;
 }
 
-bool CMainFrame::ShowWebDiffDoc(IDirDoc * pDirDoc, int nFiles, const FileLocation fileloc[],
-	const fileopenflags_t dwFlags[], const String strDesc[], const String& sReportFile /*= _T("")*/,
-	const PackingInfo* infoUnpacker /*= nullptr*/, const PrediffingInfo* infoPrediffer /*= nullptr*/,
-	const OpenWebPageParams* pOpenParams /*= nullptr*/)
-{
-	CWebPageDiffFrame *pWebPageMergeFrame = new CWebPageDiffFrame();
-	if (!CWebPageDiffFrame::menu.m_hMenu)
-		CWebPageDiffFrame::menu.m_hMenu = NewWebPageDiffViewMenu();
-	pWebPageMergeFrame->SetSharedMenu(CWebPageDiffFrame::menu.m_hMenu);
-	pWebPageMergeFrame->SetUnpacker(infoUnpacker);
-	if (pDirDoc)
-	{
-		pWebPageMergeFrame->SetDirDoc(pDirDoc);
-		pDirDoc->AddMergeDoc(pWebPageMergeFrame);
-	}
-		
-	bool completed = false, result = false;
-	if (!pWebPageMergeFrame->OpenDocs(nFiles, fileloc, GetROFromFlags(nFiles, dwFlags).data(), strDesc, this, 
-		[&completed]() { completed = true; }))
-		return false;
-
-	WaitAndDoMessageLoop(completed, 0);
-
-	pWebPageMergeFrame->MoveOnLoad(GetActivePaneFromFlags(nFiles, dwFlags));
-
-	if (!sReportFile.empty())
-	{
-		completed = false;
-		if (pWebPageMergeFrame->GenerateReport(sReportFile, [&result, &completed](bool res) { result = res; completed = true; }))
-			WaitAndDoMessageLoop(completed, 0);
-	}
-
-	return true;
-}
-
 bool CMainFrame::ShowTextMergeDoc(IDirDoc* pDirDoc, int nBuffers, const String text[],
 		const String strDesc[], const String& strFileExt, const OpenTextFileParams* pOpenParams /*= nullptr*/)
 {
@@ -1285,12 +1211,13 @@ bool CMainFrame::ShowDirDoc(IDirDoc * pDirDoc, int nFiles, const FileLocation fi
 }
 
 /**
- * @brief Show GNU licence information in notepad (local file) or in Web Browser
+ * @brief Show GNU licence information from the local file only.
  */
 void CMainFrame::OnHelpGnulicense() 
 {
 	const String spath = paths::ConcatPath(env::GetProgPath(), LicenseFile);
-	shell::OpenFileOrUrl(spath.c_str(), LicenceUrl);
+	if (paths::DoesPathExist(spath) == paths::IS_EXISTING_FILE)
+		shell::Open(spath.c_str());
 }
 
 /**
@@ -1381,7 +1308,6 @@ static void AppendComparisonCommandLineParams(
 	case ID_MERGE_COMPARE_TABLE:   params += _T("/t table "); break;
 	case ID_MERGE_COMPARE_HEX:     params += _T("/t binary "); break;
 	case ID_MERGE_COMPARE_IMAGE:   params += _T("/t image "); break;
-	case ID_MERGE_COMPARE_WEBPAGE: params += _T("/t webpage "); break;
 	case ID_MERGE_COMPARE_FOLDER:  params += _T("/t folder "); break;
 	}
 
@@ -1817,8 +1743,6 @@ void CMainFrame::UpdateResources()
 		pDoc->UpdateResources();
 	for (auto pFrame: GetAllImgMergeFrames())
 		pFrame->UpdateResources();
-	for (auto pFrame: GetAllWebPageDiffFrames())
-		pFrame->UpdateResources();
 }
 
 /**
@@ -1920,11 +1844,6 @@ void CMainFrame::OnClose()
 		if (!pFrame->CloseNow())
 			return;
 	}
-	for (auto pFrame: GetAllWebPageDiffFrames())
-	{
-		if (!pFrame->CloseNow())
-			return;
-	}
 
 	__super::OnClose();
 }
@@ -1939,8 +1858,6 @@ void CMainFrame::ApplyDiffOptions()
 		pMergeDoc->FlushAndRescan(true);
 		GetMainFrame()->WatchDocuments(pMergeDoc);
 	}
-	for (auto pWebPageDiffFrame : GetAllWebPageDiffFrames())
-		pWebPageDiffFrame->RefreshOptions();
 	for (auto pOpenDoc : GetAllOpenDocs())
 		pOpenDoc->RefreshOptions();
 }
@@ -1979,21 +1896,6 @@ std::vector<CImgMergeFrame *> CMainFrame::GetAllImgMergeFrames()
 		CMDIChildWnd *pNextChild = static_cast<CMDIChildWnd *>(pChild->GetWindow(GW_HWNDNEXT));
 		if (GetFrameType(pChild) == FRAME_IMGFILE)
 			list.push_back(static_cast<CImgMergeFrame *>(pChild));
-		pChild = pNextChild;
-	}
-	return list;
-}
-
-std::vector<CWebPageDiffFrame *> CMainFrame::GetAllWebPageDiffFrames()
-{
-	std::vector<CWebPageDiffFrame *> list;
-	// Close Non-Document/View frame with confirmation
-	CMDIChildWnd *pChild = static_cast<CMDIChildWnd *>(CWnd::FromHandle(m_hWndMDIClient)->GetWindow(GW_CHILD));
-	while (pChild != nullptr)
-	{
-		CMDIChildWnd *pNextChild = static_cast<CMDIChildWnd *>(pChild->GetWindow(GW_HWNDNEXT));
-		if (GetFrameType(pChild) == FRAME_WEBPAGE)
-			list.push_back(static_cast<CWebPageDiffFrame *>(pChild));
 		pChild = pNextChild;
 	}
 	return list;
@@ -2182,27 +2084,6 @@ void CMainFrame::UpdatePrediffersMenu(CMenu* pPredifferMenu)
 				::DeleteMenu(prediffersSubmenu, 0, MF_BYPOSITION);
 			::AppendMenu(prediffersSubmenu, MF_SEPARATOR, 0, nullptr);
 		}
-	}
-}
-
-/**
- * @brief Save WinMerge configuration and info to file
- */
-void CMainFrame::OnSaveConfigData()
-{
-	CConfigLog configLog;
-	String sError;
-
-	if (configLog.WriteLogFile(sError))
-	{
-		String sFileName = configLog.GetFileName();
-		CMergeApp::OpenFileToExternalEditor(sFileName);
-	}
-	else
-	{
-		String sFileName = configLog.GetFileName();
-		String msg = strutils::format_string2(_("Cannot open file\n%1\n\n%2"), sFileName, sError);
-		AfxMessageBox(msg.c_str(), MB_OK | MB_ICONSTOP);
 	}
 }
 
@@ -2595,13 +2476,6 @@ void CMainFrame::ProcessLog()
 
 	if (!m_pOutputDoc)
 		m_pOutputDoc = static_cast<COutputDoc*>(theApp.GetOutputTemplate()->CreateNewDocument());
-
-	if (m_logging > 0 && !m_pLogChannel)
-	{
-		Poco::Channel::Ptr pSimpleFileChannel= new Poco::SimpleFileChannel(
-			ucr::toUTF8(paths::ConcatPath(env::GetTemporaryPath(), _T("WinMerge.log"))));
-		m_pLogChannel = new Poco::AsyncChannel(pSimpleFileChannel);
-	}
 	
 	size_t size = 0;
 	for (const auto& msg : m_logBuffer)
@@ -2612,12 +2486,6 @@ void CMainFrame::ProcessLog()
 	{
 		const String logline = msg.first->format(pattern, true);
 		text += logline + _T("\r\n");
-		if (m_logging > 0 && m_pLogChannel)
-		{
-			static const Poco::Message::Priority prio[] = { Poco::Message::PRIO_ERROR, Poco::Message::PRIO_WARNING, Poco::Message::PRIO_INFORMATION };
-			if (m_logging == 1 || (m_logging == 2 && msg.first->level <= Logger::LogLevel::WARN))
-				m_pLogChannel->log(Poco::Message("", ucr::toUTF8(logline), prio[static_cast<int>(msg.first->level)]));
-		}
 		delete msg.first;
 	}
 	m_logBuffer.clear();
@@ -2647,11 +2515,6 @@ void CMainFrame::OnWindowCloseAll()
 		else if (GetFrameType(pChild) == FRAME_IMGFILE)
 		{
 			if (!static_cast<CImgMergeFrame *>(pChild)->CloseNow())
-				return;
-		}
-		else if (GetFrameType(pChild) == FRAME_WEBPAGE)
-		{
-			if (!static_cast<CWebPageDiffFrame *>(pChild)->CloseNow())
 				return;
 		}
 		else
@@ -2698,7 +2561,7 @@ void CMainFrame::OnSaveProject()
 	CFrameWnd * pFrame = GetActiveFrame();
 	FRAMETYPE frame = pFrame ? GetFrameType(pFrame) : FRAME_OTHER;
 
-	if (frame == FRAME_FILE || frame == FRAME_HEXFILE || frame == FRAME_IMGFILE || frame == FRAME_WEBPAGE)
+	if (frame == FRAME_FILE || frame == FRAME_HEXFILE || frame == FRAME_IMGFILE)
 	{
 		if (IMergeDoc* pMergeDoc = GetActiveIMergeDoc())
 		{
@@ -2737,9 +2600,6 @@ void CMainFrame::OnSaveProject()
 				break;
 			case FRAME_IMGFILE:
 				pOpenDoc->m_nWindowType = ID_MERGE_COMPARE_IMAGE - ID_MERGE_COMPARE_TEXT + 1;
-				break;
-			case FRAME_WEBPAGE:
-				pOpenDoc->m_nWindowType = ID_MERGE_COMPARE_WEBPAGE - ID_MERGE_COMPARE_TEXT + 1;
 				break;
 			}
 		}
@@ -3090,15 +2950,6 @@ void CMainFrame::OnHelpReleasenotes()
 }
 
 /**
- * @brief Shows the translations page.
- * This function opens translations page URL into browser.
- */
-void CMainFrame::OnHelpTranslations()
-{
-	shell::Open(TranslationsUrl);
-}
-
-/**
  * @brief Called when user selects File/Open Conflict...
  */
 void CMainFrame::OnFileOpenConflict()
@@ -3241,31 +3092,14 @@ bool CMainFrame::DoSelfCompare(UINT nID, const String& file, const String strDes
 {
 	String ext = paths::FindExtension(file);
 	auto wTemp = std::make_shared<TempFile>(TempFile());
-	String copiedFile;
-	if (paths::IsURL(file))
+	String copiedFile = wTemp->Create(_T("self-compare_"), ext);
+	try
 	{
-		CWaitCursor wait;
-		copiedFile = file;
-		PackingInfo infoUnpacker2 = infoUnpacker ? *infoUnpacker : PackingInfo{};
-		if (!infoUnpacker2.Unpacking(0, nullptr, copiedFile, copiedFile, { copiedFile }))
-		{
-			String sError = strutils::format_string1(_("File not unpacked: %1"), file);
-			AfxMessageBox(sError.c_str(), MB_OK | MB_ICONSTOP | MB_MODELESS);
-			return false;
-		}
-		wTemp->Attach(copiedFile);
+		TFile(file).copyTo(copiedFile);
 	}
-	else
+	catch (Poco::Exception& e)
 	{
-		copiedFile = wTemp->Create(_T("self-compare_"), ext);
-		try
-		{
-			TFile(file).copyTo(copiedFile);
-		}
-		catch (Poco::Exception& e)
-		{
-			RootLogger::Error(e.displayText());
-		}
+		RootLogger::Error(e.displayText());
 	}
 	m_tempFiles.push_back(wTemp);
 
@@ -3293,7 +3127,6 @@ CMainFrame::FRAMETYPE CMainFrame::GetFrameType(const CFrameWnd * pFrame)
 	bool bMergeFrame = !!pFrame->IsKindOf(RUNTIME_CLASS(CMergeEditFrame));
 	bool bHexMergeFrame = !!pFrame->IsKindOf(RUNTIME_CLASS(CHexMergeFrame));
 	bool bImgMergeFrame = !!pFrame->IsKindOf(RUNTIME_CLASS(CImgMergeFrame));
-	bool bWebPageDiffFrame = !!pFrame->IsKindOf(RUNTIME_CLASS(CWebPageDiffFrame));
 	bool bDirFrame = !!pFrame->IsKindOf(RUNTIME_CLASS(CDirFrame));
 
 	if (bMergeFrame)
@@ -3302,8 +3135,6 @@ CMainFrame::FRAMETYPE CMainFrame::GetFrameType(const CFrameWnd * pFrame)
 		return FRAME_HEXFILE;
 	else if (bImgMergeFrame)
 		return FRAME_IMGFILE;
-	else if (bWebPageDiffFrame)
-		return FRAME_WEBPAGE;
 	else if (bDirFrame)
 		return FRAME_FOLDER;
 	else
@@ -3669,7 +3500,6 @@ void CMainFrame::ReloadMenu()
 	HMENU hNewDefaultMenu = pMainFrame->NewDefaultMenu(idMenu);
 	HMENU hNewMergeMenu = pMainFrame->NewMergeViewMenu();
 	HMENU hNewImgMergeMenu = pMainFrame->NewImgMergeViewMenu();
-	HMENU hNewWebPageDiffMenu = pMainFrame->NewWebPageDiffViewMenu();
 	HMENU hNewDirMenu = pMainFrame->NewDirViewMenu();
 	if (hNewDefaultMenu != nullptr && hNewMergeMenu != nullptr && hNewDirMenu != nullptr)
 	{
@@ -3677,7 +3507,6 @@ void CMainFrame::ReloadMenu()
 		CMenu * pNewDefaultMenu = CMenu::FromHandle(hNewDefaultMenu);
 		CMenu * pNewMergeMenu = CMenu::FromHandle(hNewMergeMenu);
 		CMenu * pNewImgMergeMenu = CMenu::FromHandle(hNewImgMergeMenu);
-		CMenu * pNewWebPageDiffMenu = CMenu::FromHandle(hNewWebPageDiffMenu);
 		CMenu * pNewDirMenu = CMenu::FromHandle(hNewDirMenu);
 
 		CWnd *pFrame = CWnd::FromHandle(::GetWindow(pMainFrame->m_hWndMDIClient, GW_CHILD));
@@ -3689,8 +3518,6 @@ void CMainFrame::ReloadMenu()
 				static_cast<CHexMergeFrame *>(pFrame)->SetSharedMenu(hNewMergeMenu);
 			if (pFrame->IsKindOf(RUNTIME_CLASS(CImgMergeFrame)))
 				static_cast<CImgMergeFrame *>(pFrame)->SetSharedMenu(hNewImgMergeMenu);
-			if (pFrame->IsKindOf(RUNTIME_CLASS(CWebPageDiffFrame)))
-				static_cast<CWebPageDiffFrame *>(pFrame)->SetSharedMenu(hNewWebPageDiffMenu);
 			else if (pFrame->IsKindOf(RUNTIME_CLASS(COpenFrame)))
 				static_cast<COpenFrame *>(pFrame)->SetSharedMenu(hNewDefaultMenu);
 			else if (pFrame->IsKindOf(RUNTIME_CLASS(CDirFrame)))
@@ -3707,8 +3534,6 @@ void CMainFrame::ReloadMenu()
 				pMainFrame->MDISetMenu(pNewMergeMenu, nullptr);
 			else if (pActiveFrame->IsKindOf(RUNTIME_CLASS(CImgMergeFrame)))
 				pMainFrame->MDISetMenu(pNewImgMergeMenu, nullptr);
-			else if (pActiveFrame->IsKindOf(RUNTIME_CLASS(CWebPageDiffFrame)))
-				pMainFrame->MDISetMenu(pNewWebPageDiffMenu, nullptr);
 			else if (pActiveFrame->IsKindOf(RUNTIME_CLASS(CDirFrame)))
 				pMainFrame->MDISetMenu(pNewDirMenu, nullptr);
 			else
@@ -4082,8 +3907,6 @@ void CMainFrame::OnSettingChange(UINT uFlags, LPCTSTR lpszSection)
 				pHexMergeDoc->RefreshOptions();
 			for (auto pImgMergeFrame : GetAllImgMergeFrames())
 				pImgMergeFrame->RefreshOptions();
-			for (auto pWebPageDiffFrame : GetAllWebPageDiffFrames())
-				pWebPageDiffFrame->RefreshOptions();
 			for (auto pOpenDoc : GetAllOpenDocs())
 				pOpenDoc->RefreshOptions();
 

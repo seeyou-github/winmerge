@@ -558,7 +558,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName)2.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
-    <ClCompile Include="..\..\Src\Common\RegOptionsMgr.cpp">
+    <ClCompile Include="..\..\Src\Common\IniOptionsMgr.cpp">
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName)2.pch</PrecompiledHeaderOutputFile>
@@ -757,11 +757,6 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName)2.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
-    <ClCompile Include="..\..\Src\Common\RegKey.cpp">
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName)2.pch</PrecompiledHeaderOutputFile>
-    </ClCompile>
     <ClCompile Include="..\..\Src\Common\unicoder.cpp">
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -825,7 +820,7 @@
     <ClInclude Include="..\..\Src\Common\ExConverter.h" />
     <ClInclude Include="..\..\Src\Common\locality.h" />
     <ClInclude Include="..\..\Src\Common\OptionsMgr.h" />
-    <ClInclude Include="..\..\Src\Common\RegOptionsMgr.h" />
+    <ClInclude Include="..\..\Src\Common\IniOptionsMgr.h" />
     <ClInclude Include="..\..\Src\Common\VersionInfo.h" />
     <ClInclude Include="..\..\Src\CompareOptions.h" />
     <ClInclude Include="..\..\Src\CompareStats.h" />
@@ -869,7 +864,6 @@
     <ClInclude Include="..\..\Src\Common\paths.h" />
     <ClInclude Include="..\..\Src\PluginManager.h" />
     <ClInclude Include="..\..\Src\Plugins.h" />
-    <ClInclude Include="..\..\Src\Common\RegKey.h" />
     <ClInclude Include="..\..\Src\Common\unicoder.h" />
     <ClInclude Include="..\..\Src\Common\UnicodeString.h" />
     <ClInclude Include="..\..\Src\Common\UniFile.h" />

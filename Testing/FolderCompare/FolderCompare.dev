@@ -1171,7 +1171,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit113]
-FileName=..\..\Src\Common\RegOptionsMgr.cpp
 CompileCpp=1
 Folder=Source Files
 Compile=1
@@ -1181,7 +1180,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit114]
-FileName=..\..\Src\Common\RegOptionsMgr.h
 CompileCpp=1
 Folder=Header Files
 Compile=1
@@ -1311,7 +1309,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit127]
-FileName=..\..\Src\Common\RegKey.cpp
 CompileCpp=1
 Folder=Source Files
 Compile=1
@@ -1321,7 +1318,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit128]
-FileName=..\..\Src\Common\RegKey.h
 CompileCpp=1
 Folder=Header Files
 Compile=1

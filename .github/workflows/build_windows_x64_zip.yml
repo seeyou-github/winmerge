@@ -25,8 +25,6 @@ jobs:
       run: |
         call .\DownloadDeps.cmd
         if errorlevel 1 exit /b 1
-        call .\BuildManual.cmd
-        if errorlevel 1 exit /b 1
         call .\BuildBin.vs2022.cmd x64
         if errorlevel 1 exit /b 1
         if not exist ".\Testing\GoogleTest\UnitTests\UnitTests.exe" (

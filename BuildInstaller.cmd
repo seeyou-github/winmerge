@@ -1,4 +1,5 @@
-
+@echo off
+if /i "%2" == "-ci" exit /b 0
 
 if "%1" == "" (
   call :BuildInstaller x86

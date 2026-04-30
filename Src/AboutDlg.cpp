@@ -60,7 +60,6 @@ public:
 	afx_msg void OnBnClickedOpenContributors();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
-	afx_msg void OnBnClickedWWW(NMHDR *pNMHDR, LRESULT *pResult);
 
 private:
 	CAboutDlg *const m_p;
@@ -75,7 +74,6 @@ BEGIN_MESSAGE_MAP(CAboutDlg::Impl, CTrDialog)
 	ON_BN_CLICKED(IDC_OPEN_CONTRIBUTORS, OnBnClickedOpenContributors)
 	ON_WM_ERASEBKGND()
 	ON_WM_CTLCOLOR()
-	ON_NOTIFY(NM_CLICK, IDC_WWW, OnBnClickedWWW)
 END_MESSAGE_MAP()
 
 CAboutDlg::Impl::Impl(CAboutDlg *p, CWnd* pParent /*= nullptr*/)
@@ -116,18 +114,10 @@ BOOL CAboutDlg::Impl::OnInitDialog()
 	GetDlgItem(IDC_GNU_ASCII)->SetFont(&m_font_gnu_ascii);
 	::SetDlgItemTextA(m_hWnd, IDC_GNU_ASCII, gnu_ascii);
 
-	String link;
-	GetDlgItemText(IDC_WWW, link);
-	link = _T("<a href=\"") + m_p->m_info.website + _T("\">") + link + _T("</a>");
-	SetDlgItemText(IDC_WWW, link);
-
 	UpdateData(FALSE);
 
 	if (DarkMode::isExperimentalActive())
 		WinMergeDarkMode::InvertLightness(m_image);
-
-	if (HWND hLink = GetDlgItem(IDC_WWW)->GetSafeHwnd())
-		DarkMode::enableSysLinkCtrlCtlColor(hLink);
 
 	if (HWND hSelf = m_hWnd)
 	{
@@ -185,12 +175,6 @@ void CAboutDlg::Impl::OnBnClickedOpenContributors()
 {
 	int tmp = 0;
 	m_p->m_onclick_contributers.notify(m_p, tmp);
-}
-
-void CAboutDlg::Impl::OnBnClickedWWW(NMHDR *pNMHDR, LRESULT *pResult)
-{
-	int tmp = 0;
-	m_p->m_onclick_url.notify(m_p, tmp);
 }
 
 CAboutDlg::CAboutDlg() : m_pimpl(new CAboutDlg::Impl(this)) {}

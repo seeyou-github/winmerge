@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "MergeApp.h"
 #include "unicoder.h"
-#include "RegOptionsMgr.h"
+#include "IniOptionsMgr.h"
 #include "OptionsDef.h"
 
 void AppErrorMessageBox(const String& msg)
@@ -13,7 +13,7 @@ String GetSysError(int nerr)
 	return _T("");
 }
 
-CRegOptionsMgr m_option(_T("Thingamahoochie\\WinMerge\\"));
+CIniOptionsMgr m_option(_T("UnitTests.ini"));
 
 COptionsMgr * GetOptionsMgr()
 {

@@ -61,7 +61,6 @@
           Target="[INSTALLDIR]Docs\WinMerge.chm"
           WorkingDirectory="INSTALLDIR" />
         <RemoveFolder Id="WinMergeMenuFolder" On="uninstall" />
-        <RegistryValue Root="HKCU" Key="Software\Thingamahoochie\WinMerge" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
       </Component>
     </DirectoryRef>
     
@@ -73,7 +72,6 @@
           Name="WinMerge" 
           Target="[INSTALLDIR]WinMergeU.exe"
           WorkingDirectory="INSTALLDIR" />
-        <RegistryValue Root="HKCU" Key="Software\Thingamahoochie\WinMerge" Name="Installed" Type="integer" Value="1" KeyPath="yes" />
       </Component>
     </DirectoryRef>
   </Fragment>

@@ -8,9 +8,8 @@ OBJS=\
 ../../Src/Common/coretools.o \
 ../../Src/Common/lwdisp.o \
 ../../Src/Common/multiformatText.o \
+../../Src/Common/IniOptionsMgr.o \
 ../../Src/Common/OptionsMgr.o \
-../../Src/Common/RegKey.o \
-../../Src/Common/RegOptionsMgr.o \
 ../../Src/Common/ShellFileOperations.o \
 ../../Src/Common/UnicodeString.o \
 ../../Src/Common/UniFile.o \

@@ -30,7 +30,20 @@ jobs:
       run: |
         call .\DownloadDeps.cmd
         if errorlevel 1 exit /b 1
-        call .\BuildAll.vs2022.cmd x64 -ci
+        call .\BuildBin.vs2022.cmd x64
+        if errorlevel 1 exit /b 1
+        if not exist ".\Testing\GoogleTest\UnitTests\UnitTests.exe" (
+          echo UnitTests.exe was not produced by BuildBin.vs2022.cmd
+          exit /b 1
+        )
+        pushd .\Testing\GoogleTest\UnitTests
+        if errorlevel 1 exit /b 1
+        call .\UnitTests.exe
+        if errorlevel 1 exit /b 1
+        popd
+        call .\BuildTranslations.cmd
+        if errorlevel 1 exit /b 1
+        call .\BuildArc.cmd x64 -ci
         if errorlevel 1 exit /b 1
 
     - name: Upload zip
@@ -38,9 +51,3 @@ jobs:
       with:
         name: WinMerge-x64.zip
         path: Build/Releases/*.zip
-
-    - name: Upload installer
-      uses: actions/upload-artifact@v4
-      with:
-        name: WinMerge-x64-Setup-x64.exe
-        path: Build/Releases/*.exe

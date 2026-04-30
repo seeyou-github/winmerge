@@ -274,22 +274,6 @@ TEST_P(MainFrameTest, HelpReleaseNotes)
 	SwitchToThisWindow(m_hwndWinMerge, TRUE);
 }
 
-TEST_P(MainFrameTest, HelpTranslations)
-{
-	selectMenuAsync(ID_HELP_TRANSLATIONS);
-	Sleep(1000);
-	saveForegroundWindowImage();
-	SwitchToThisWindow(m_hwndWinMerge, TRUE);
-}
-
-TEST_P(MainFrameTest, HelpConfiguraiton)
-{
-	selectMenuAsync(ID_HELP_GETCONFIG);
-	Sleep(1000);
-	saveForegroundWindowImage();
-	SwitchToThisWindow(m_hwndWinMerge, TRUE);
-}
-
 TEST_P(MainFrameTest, HelpGNULicense)
 {
 	selectMenuAsync(ID_HELP_GNULICENSE);

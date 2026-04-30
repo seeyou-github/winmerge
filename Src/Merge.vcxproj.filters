@@ -168,9 +168,6 @@
     <ClCompile Include="CompareStats.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ConfigLog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ConflictFileParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -483,9 +480,6 @@
     <ClCompile Include="Common\lwdisp.c">
       <Filter>Common\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Common\RegKey.cpp">
-      <Filter>Common\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Common\ShellFileOperations.cpp">
       <Filter>Common\Source Files</Filter>
     </ClCompile>
@@ -496,9 +490,6 @@
       <Filter>Common\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Common\unicoder.cpp">
-      <Filter>Common\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Common\RegOptionsMgr.cpp">
       <Filter>Common\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Common\PidlContainer.cpp">
@@ -708,12 +699,6 @@
     <ClCompile Include="ClipboardHistory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WebPageDiffFrm.cpp">
-      <Filter>MFCGui\MDIChild\WebPageCompare\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PropCompareWebPage.cpp">
-      <Filter>MFCGui\PropertyPages\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DirWatcher.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -834,9 +819,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CompareStats.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ConfigLog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ConflictFileParser.h">
@@ -1211,12 +1193,6 @@
     <ClInclude Include="Common\ShellFileOperations.h">
       <Filter>Common\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Common\RegOptionsMgr.h">
-      <Filter>Common\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Common\RegKey.h">
-      <Filter>Common\Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Common\PidlContainer.h">
       <Filter>Common\Header Files</Filter>
     </ClInclude>
@@ -1435,12 +1411,6 @@
     </ClInclude>
     <ClInclude Include="ClipboardHistory.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="WebPageDiffFrm.h">
-      <Filter>MFCGui\MDIChild\WebPageCompare\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PropCompareWebPage.h">
-      <Filter>MFCGui\PropertyPages\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DirWatcher.h">
       <Filter>Header Files</Filter>
@@ -1757,9 +1727,6 @@
     <Image Include="res\equaltextfile.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\equalwebpage.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="res\exit.bmp">
       <Filter>Resource Files</Filter>
     </Image>
@@ -1847,9 +1814,6 @@
     <Image Include="res\new_table.bmp">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\new_webpage.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="res\new3.bmp">
       <Filter>Resource Files</Filter>
     </Image>
@@ -1860,9 +1824,6 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\new3_table.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\new3_webpage.bmp">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\next_bookmark.bmp">
@@ -1884,9 +1845,6 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\notequaltextfile.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\notequalwebpage.ico">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\open_conflict.bmp">
